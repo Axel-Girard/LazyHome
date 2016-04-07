@@ -1,0 +1,13 @@
+body {
+    overflow: hidden;
+    padding : 0px;
+    margin : 0px;
+}
+
+li .cross{
+    visibility: hidden;
+}
+
+li:hover .cross{
+    visibility: visible;
+}

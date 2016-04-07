@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>LazyHome - Ytb</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="./Youtube/YoutubeWatch/YoutubeWatch.css">
+    </head>
+    <body>
+        <div id="player"></div>
+        <div class="row" id="mosaic">
+            <div class="col s12">
+                <ul class="collection white-text with-header">
+                    <li class="collection-header grey darken-4 center"><h4>Playing : XXXX - Deadpool</h4></li>
+                </ul>
+            </div>
+            <div class="col s6">
+                <ul class="collection white-text with-header">
+                    <li class="collection-header grey darken-4"><h4>Next</h4></li>
+                    <div id="listNext">
+
+                    </div>
+                </ul>
+            </div>
+            <div class="col s6">
+                <ul class="collection white-text with-header">
+                    <li class="collection-header grey darken-4"><h4>Previous</h4></li>
+                    <li class="collection-item avatar grey darken-4">
+                        <img src="http://materializecss.com/images/yuna.jpg" alt="" class="circle">
+                        <span class="title">Title</span>
+                        <p>First Line <br>
+                            Second Line
+                        </p>
+                    </li>
+                    <li class="collection-item avatar grey darken-4">
+                        <i class="material-icons circle">folder</i>
+                        <span class="title">Title</span>
+                        <p>First Line <br>
+                            Second Line
+                        </p>
+                    </li>
+                    <li class="collection-item avatar grey darken-4">
+                        <i class="material-icons circle green">insert_chart</i>
+                        <span class="title">Title</span>
+                        <p>First Line <br>
+                            Second Line
+                        </p>
+                    </li>
+                    <li class="collection-item avatar grey darken-4">
+                        <i class="material-icons circle red">play_arrow</i>
+                        <span class="title">Title</span>
+                        <p>First Line <br>
+                            Second Line
+                        </p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="./Youtube/YoutubeWatch/YoutubeWatch.js"></script>
+    </body>
+</html>

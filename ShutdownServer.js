@@ -2,16 +2,18 @@
 
 var exec = require('child_process').exec;
 
-module.exports = function(app,io,config) {
-    
+module.exports = function (app, io, config) {
+
     io.sockets.on('connection', (socket) => {
+
+        if (socket.client.request.headers.host.indexOf('192.168.1') > -1) { socket.join('locals'); }
 
         socket.on('Shutdown:cancel',() => {
             cancel(socket);
         });
 
         socket.on('Shutdown:shutdown', (password) => {
-            shutdown(password,socket);
+            if (socket.rooms['locals'] !== undefined) { shutdown(password,socket); }
         });
 
     });

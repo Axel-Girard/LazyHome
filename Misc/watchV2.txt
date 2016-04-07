@@ -1,0 +1,48 @@
+        <div class="row" id="mosaic">
+            <div class="col s12">
+                <ul class="collection white-text with-header">
+                    <li class="collection-header grey darken-4 center"><h4>Playing : XXXX - Deadpool</h4></li>
+                </ul>
+            </div>
+            <div class="col s6">
+                <ul class="collection white-text with-header">
+                    <li class="collection-header grey darken-4"><h4>Next</h4></li>
+                    <div id="listNext">
+
+                    </div>
+                </ul>
+            </div>
+            <div class="col s6">
+                <ul class="collection white-text with-header">
+                    <li class="collection-header grey darken-4"><h4>Previous</h4></li>
+                    <li class="collection-item avatar grey darken-4">
+                        <img src="http://materializecss.com/images/yuna.jpg" alt="" class="circle">
+                        <span class="title">Title</span>
+                        <p>First Line <br>
+                            Second Line
+                        </p>
+                    </li>
+                    <li class="collection-item avatar grey darken-4">
+                        <i class="material-icons circle">folder</i>
+                        <span class="title">Title</span>
+                        <p>First Line <br>
+                            Second Line
+                        </p>
+                    </li>
+                    <li class="collection-item avatar grey darken-4">
+                        <i class="material-icons circle green">insert_chart</i>
+                        <span class="title">Title</span>
+                        <p>First Line <br>
+                            Second Line
+                        </p>
+                    </li>
+                    <li class="collection-item avatar grey darken-4">
+                        <i class="material-icons circle red">play_arrow</i>
+                        <span class="title">Title</span>
+                        <p>First Line <br>
+                            Second Line
+                        </p>
+                    </li>
+                </ul>
+            </div>
+        </div>

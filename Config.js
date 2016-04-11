@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
 module.exports = {
-    'Shutdown_mdp' : 'Caput Draconis',
-    'Shutdown_timer' : 30
-};
+  'Shutdown_mdp': 'Caput Draconis',
+  'Shutdown_timer': 30
+}

@@ -1,6 +1,5 @@
 /*globals $:true, io:true, Materialize:true */
 
-var socket = io()
 
 var paused = false
 

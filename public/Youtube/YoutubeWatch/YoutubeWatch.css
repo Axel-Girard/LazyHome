@@ -1,13 +1,13 @@
 body {
-    overflow: hidden;
-    padding : 0px;
-    margin : 0px;
+  overflow: hidden;
+  padding : 0px;
+  margin : 0px;
+  background-color: #212121;
+  font-size: 10vw;
+  color: darkred;
+  text-align: center;
 }
 
-li .cross{
-    visibility: hidden;
-}
-
-li:hover .cross{
-    visibility: visible;
+i {
+  vertical-align: middle;
 }

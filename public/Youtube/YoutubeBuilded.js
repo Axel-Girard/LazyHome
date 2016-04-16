@@ -2,6 +2,11 @@
 
 'use strict';
 
+var MESSAGES = { errorUrlFormat: 'Wrong URL Format',
+  searchBarPlaceholder: 'Search ...' };
+
+var CHIPS_OUT = 3000;
+
 var socket = io();
 
 /* Utils */
@@ -48,12 +53,23 @@ function setVolume(volume) {
   socket.emit('Youtube:volume', volume);
 }
 
+function showError(message, duration) {
+  ReactDOM.render(React.createElement(
+    UniversalError,
+    null,
+    message
+  ), document.getElementById('ErrorRow'));
+  setTimeout(function () {
+    return ReactDOM.render(React.createElement(UniversalError, null), document.getElementById('ErrorRow'));
+  }, duration);
+}
+
 function onNewUrl(url) {
   var id = videoURL_parser(url);
   if (!id) {
     id = playlistURL_parser(url);
     if (!id) {
-      alert('Wrong url');
+      showError(MESSAGES.errorUrlFormat, CHIPS_OUT);
     } else {
       socket.emit('Youtube:add', url);
     }
@@ -96,6 +112,7 @@ var SearchBar = React.createClass({
     event.preventDefault();
     onNewUrl(this.state.url);
     this.setState({ url: '' });
+    $(event.target).find('input')[0].blur();
   },
   handleChange: function handleChange(event) {
     this.setState({ url: event.target.value });
@@ -107,12 +124,26 @@ var SearchBar = React.createClass({
       React.createElement(
         'div',
         { 'class': 'input-field' },
-        React.createElement('input', { id: 'search', type: 'text', className: 'red lighten-3 black-text', value: this.state.url, onChange: this.handleChange, placeholder: 'Search ...' })
+        React.createElement('input', { id: 'search', type: 'text', className: 'red lighten-3 black-text', value: this.state.url, onChange: this.handleChange, placeholder: MESSAGES.searchBarPlaceholder })
       ),
       React.createElement('input', { type: 'submit', hidden: true })
     );
   }
 });
+
+function UniversalError(props) {
+  var text = props.children ? React.createElement(
+    'div',
+    { className: 'chip red white-text' },
+    props.children,
+    React.createElement(
+      'i',
+      { className: 'material-icons' },
+      'close'
+    )
+  ) : React.createElement('div', null);
+  return text;
+}
 
 /* Cards */
 
@@ -148,14 +179,16 @@ var YoutubePage = React.createClass({
     return { volume: 50 };
   },
   onVolumeUp: function onVolumeUp() {
-    console.log('volume up');
-    this.setState({ volume: this.state.volume + 5 });
-    setVolume(this.state.volume);
+    if (this.state.volume < 100) {
+      this.setState({ volume: this.state.volume + 5 });
+      setVolume(this.state.volume);
+    }
   },
   onVolumeDown: function onVolumeDown() {
-    console.log('volume down');
-    this.setState({ volume: this.state.volume - 5 });
-    setVolume(this.state.volume);
+    if (this.state.volume > 0) {
+      this.setState({ volume: this.state.volume - 5 });
+      setVolume(this.state.volume);
+    }
   },
   render: function render() {
     return React.createElement(
@@ -185,6 +218,11 @@ var YoutubePage = React.createClass({
               { className: 'col s1 black-text right-align' },
               React.createElement(CloseButton, null)
             )
+          ),
+          React.createElement(
+            'div',
+            { className: 'row' },
+            React.createElement('div', { className: 'col s12', id: 'ErrorRow' })
           ),
           React.createElement(
             'div',
@@ -269,8 +307,8 @@ var YoutubePage = React.createClass({
               'div',
               { className: 'col s3 center-align' },
               React.createElement(
-                'p',
-                null,
+                'span',
+                { id: 'VolumeText' },
                 this.state.volume
               )
             )
@@ -284,7 +322,11 @@ var YoutubePage = React.createClass({
               React.createElement(
                 'a',
                 { className: 'waves-effect waves-light btn-large red lighten-3 btn-flat', href: '/Youtube' },
-                'Watch'
+                React.createElement(
+                  'b',
+                  null,
+                  'Watch'
+                )
               )
             ),
             React.createElement(

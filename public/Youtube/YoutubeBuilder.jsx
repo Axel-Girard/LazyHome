@@ -2,6 +2,11 @@
 
 'use strict'
 
+var MESSAGES = {errorUrlFormat: 'Wrong URL Format',
+                searchBarPlaceholder: 'Search ...'}
+
+var CHIPS_OUT = 3000
+
 var socket = io()
 
 /* Utils */
@@ -48,12 +53,17 @@ function setVolume (volume) {
   socket.emit('Youtube:volume', volume)
 }
 
+function showError(message, duration){
+  ReactDOM.render(<UniversalError>{message}</UniversalError>, document.getElementById('ErrorRow'))
+  setTimeout(() => ReactDOM.render(<UniversalError></UniversalError>, document.getElementById('ErrorRow')), duration)
+}
+
 function onNewUrl (url) {
   var id = videoURL_parser(url)
   if (!id) {
     id = playlistURL_parser(url)
     if (!id) {
-      alert('Wrong url')
+      showError(MESSAGES.errorUrlFormat, CHIPS_OUT)
     } else {
       socket.emit('Youtube:add', url)
     }
@@ -93,6 +103,7 @@ var SearchBar = React.createClass({
     event.preventDefault()
     onNewUrl(this.state.url)
     this.setState({url: ''})
+    $(event.target).find('input')[0].blur()
   },
   handleChange: function (event) {
     this.setState({url: event.target.value})
@@ -101,12 +112,17 @@ var SearchBar = React.createClass({
     return (
       <form action='/' method='post' onSubmit={this.handleSubmit}>
         <div class='input-field'>
-          <input id='search' type='text' className='red lighten-3 black-text' value={this.state.url} onChange={this.handleChange} placeholder='Search ...'/>
+          <input id='search' type='text' className='red lighten-3 black-text' value={this.state.url} onChange={this.handleChange} placeholder={MESSAGES.searchBarPlaceholder}/>
         </div>
         <input type='submit' hidden/>
       </form>
     ) }
 })
+
+function UniversalError (props) {
+  var text = props.children ? <div className="chip red white-text">{props.children}<i className="material-icons">close</i></div> : <div></div>
+  return text
+}
 
 /* Cards */
 
@@ -131,14 +147,16 @@ var YoutubePage = React.createClass({
     return {volume: 50}
   },
   onVolumeUp: function () {
-    console.log('volume up')
-    this.setState({volume: this.state.volume + 5})
-    setVolume(this.state.volume)
+    if (this.state.volume < 100) {
+      this.setState({volume: this.state.volume + 5})
+      setVolume(this.state.volume)
+    }
   },
   onVolumeDown: function () {
-    console.log('volume down')
-    this.setState({volume: this.state.volume - 5})
-    setVolume(this.state.volume)
+    if (this.state.volume > 0) {
+      this.setState({volume: this.state.volume - 5})
+      setVolume(this.state.volume)
+    }
   },
   render: function () {
     return (
@@ -151,6 +169,10 @@ var YoutubePage = React.createClass({
               </div>
               <div className='col s1 black-text right-align'>
                 <CloseButton />
+              </div>
+            </div>
+            <div className='row'>
+              <div className='col s12' id='ErrorRow'>
               </div>
             </div>
             <div className='row'>
@@ -183,13 +205,13 @@ var YoutubePage = React.createClass({
                 <ControlButton onClick={onClickBigNext}><i className='fa fa-arrow-right fa-5x'></i></ControlButton>
               </div>
               <div className='col s3 center-align'>
-                <p>{this.state.volume}</p>
+                <span id="VolumeText">{this.state.volume}</span>
               </div>
             </div>
             <div className='row'>
               <div className='col s3 offset-s3 center-align'>
                 <a className='waves-effect waves-light btn-large red lighten-3 btn-flat' href='/Youtube'>
-                  Watch
+                  <b>Watch</b>
                 </a>
               </div>
               <div className='col s3 offset-s3 center-align'>

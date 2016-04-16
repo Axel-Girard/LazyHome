@@ -20,7 +20,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
 
 // EVENTS
 
-socket.on('Youtube:add', (url) => {
+socket.on('Youtube:add', function (url) {
   if (state.playing) {
     urls.push(url)
   } else {
@@ -28,33 +28,33 @@ socket.on('Youtube:add', (url) => {
   }
 })
 
-socket.on('Youtube:resume', (time) => {
+socket.on('Youtube:resume', function (time) {
   player.playVideo()
 })
 
-socket.on('Youtube:clear', () => {
+socket.on('Youtube:clear', function () {
   stopVideo()
   urls = []
   previousURL = []
 })
 
-socket.on('Youtube:volume', (volume) => {
+socket.on('Youtube:volume', function (volume) {
   player.setVolume(volume)
 })
 
-socket.on('Youtube:pause', () => {
+socket.on('Youtube:pause', function () {
   player.pauseVideo()
 })
 
-socket.on('Youtube:next', () => {
+socket.on('Youtube:next', function () {
   next(true)
 })
 
-socket.on('Youtube:previous', () => {
+socket.on('Youtube:previous', function () {
   previous()
 })
 
-socket.on('Youtube:bigNext', () => {
+socket.on('Youtube:bigNext', function () {
   nextVideo()
 })
 

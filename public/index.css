@@ -1,8 +1,6 @@
-#YoutubeActivator{
-  font-size:5vw;
-}
+/* Youtube */
 
-#countdown{
+#YoutubeActivator{
   font-size:5vw;
 }
 
@@ -10,29 +8,49 @@
   height: 100%;
 }
 
-.btn-large i{
+@media only screen and (max-width: 1000px) {
+
+  #YoutubeControls #VolumeText {
+    font-size: 4vw;
+  }
+
+}
+
+@media only screen and (min-width: 1000px) {
+
+  #YoutubeControls #VolumeText {
+    font-size: 2vw;
+  }
+
+}
+
+::-webkit-input-placeholder {
+  color: #616161;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+  color: #616161;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+  color: #616161;
+}
+
+:-ms-input-placeholder {
+  color: #616161;
+}
+
+#countdown{
+  font-size:5vw;
+}
+
+.btn-large a{
   font-size: 2vw;
 }
 
 input[type=text] {
   height: 7vh;
   font-size: 3vh;
-}
-
-::-webkit-input-placeholder {
-   color: #616161;
-}
-
-:-moz-placeholder { /* Firefox 18- */
-   color: #616161;
-}
-
-::-moz-placeholder {  /* Firefox 19+ */
-   color: #616161;
-}
-
-:-ms-input-placeholder {
-   color: #616161;
 }
 
 #Title i, #Title h1 {

@@ -18,8 +18,8 @@ module.exports = function (app, io, path) {
     socket.on('Youtube:clear', () => {
       socket.broadcast.emit('Youtube:clear')
     })
-    socket.on('Youtube:volume', (length) => {
-      socket.broadcast.emit('Youtube:volume', length)
+    socket.on('Youtube:volume', (volume) => {
+      socket.broadcast.emit('Youtube:volume', volume)
     })
     socket.on('Youtube:next', () => {
       socket.broadcast.emit('Youtube:next')

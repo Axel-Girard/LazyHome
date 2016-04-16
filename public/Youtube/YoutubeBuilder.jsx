@@ -9,6 +9,8 @@ var CHIPS_OUT = 3000
 
 var socket = io()
 
+var timeout
+
 /* Utils */
 
 function videoURL_parser (url) {
@@ -54,8 +56,9 @@ function setVolume (volume) {
 }
 
 function showError(message, duration){
+  clearTimeout(timeout)
   ReactDOM.render(<UniversalError>{message}</UniversalError>, document.getElementById('ErrorRow'))
-  setTimeout(() => ReactDOM.render(<UniversalError></UniversalError>, document.getElementById('ErrorRow')), duration)
+  timeout = setTimeout(() => ReactDOM.render(<UniversalError></UniversalError>, document.getElementById('ErrorRow')), duration)
 }
 
 function onNewUrl (url) {
@@ -148,14 +151,15 @@ var YoutubePage = React.createClass({
   },
   onVolumeUp: function () {
     if (this.state.volume < 100) {
+      setVolume(this.state.volume + 5)
       this.setState({volume: this.state.volume + 5})
-      setVolume(this.state.volume)
+
     }
   },
   onVolumeDown: function () {
     if (this.state.volume > 0) {
+      setVolume(this.state.volume - 5)
       this.setState({volume: this.state.volume - 5})
-      setVolume(this.state.volume)
     }
   },
   render: function () {

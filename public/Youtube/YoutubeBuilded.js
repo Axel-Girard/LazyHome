@@ -9,6 +9,8 @@ var CHIPS_OUT = 3000;
 
 var socket = io();
 
+var timeout;
+
 /* Utils */
 
 function videoURL_parser(url) {
@@ -54,12 +56,13 @@ function setVolume(volume) {
 }
 
 function showError(message, duration) {
+  clearTimeout(timeout);
   ReactDOM.render(React.createElement(
     UniversalError,
     null,
     message
   ), document.getElementById('ErrorRow'));
-  setTimeout(function () {
+  timeout = setTimeout(function () {
     return ReactDOM.render(React.createElement(UniversalError, null), document.getElementById('ErrorRow'));
   }, duration);
 }
@@ -180,14 +183,14 @@ var YoutubePage = React.createClass({
   },
   onVolumeUp: function onVolumeUp() {
     if (this.state.volume < 100) {
+      setVolume(this.state.volume + 5);
       this.setState({ volume: this.state.volume + 5 });
-      setVolume(this.state.volume);
     }
   },
   onVolumeDown: function onVolumeDown() {
     if (this.state.volume > 0) {
+      setVolume(this.state.volume - 5);
       this.setState({ volume: this.state.volume - 5 });
-      setVolume(this.state.volume);
     }
   },
   render: function render() {

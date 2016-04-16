@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "nodemon server.js",
-    "youtubeBabel": "babel ./public/Youtube/YoutubeBuilder.js --watch --out-file ./public/Youtube/YoutubeBuilded.js",
+    "youtubeBabel": "babel ./public/Youtube/YoutubeBuilder.jsx --watch --out-file ./public/Youtube/YoutubeBuilded.js",
     "shutdownBabel": "babel ./public/Shutdown/ShutdownBuilder.js --watch --out-file ./public/Shutdown/ShutdownBuilded.js"
   },
   "jshintConfig": {

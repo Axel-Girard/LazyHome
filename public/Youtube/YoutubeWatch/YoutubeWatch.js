@@ -20,7 +20,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
 
 // EVENTS
 
-socket.on('Youtube:play', (url) => {
+socket.on('Youtube:add', (url) => {
   if (state.playing) {
     urls.push(url)
   } else {
@@ -32,7 +32,7 @@ socket.on('Youtube:resume', (time) => {
   player.playVideo()
 })
 
-socket.on('Youtube:stop', () => {
+socket.on('Youtube:clear', () => {
   stopVideo()
   urls = []
   previousURL = []
@@ -54,7 +54,7 @@ socket.on('Youtube:previous', () => {
   previous()
 })
 
-socket.on('Youtube:skipPlaylist', () => {
+socket.on('Youtube:bigNext', () => {
   nextVideo()
 })
 

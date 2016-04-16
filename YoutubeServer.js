@@ -6,8 +6,8 @@ module.exports = function (app, io, path) {
   })
 
   io.sockets.on('connection', (socket) => {
-    socket.on('Youtube:play', (data) => {
-      socket.broadcast.emit('Youtube:play', data)
+    socket.on('Youtube:add', (data) => {
+      socket.broadcast.emit('Youtube:add', data)
     })
     socket.on('Youtube:pause', () => {
       socket.broadcast.emit('Youtube:pause')
@@ -15,8 +15,8 @@ module.exports = function (app, io, path) {
     socket.on('Youtube:resume', () => {
       socket.broadcast.emit('Youtube:resume')
     })
-    socket.on('Youtube:stop', () => {
-      socket.broadcast.emit('Youtube:stop')
+    socket.on('Youtube:clear', () => {
+      socket.broadcast.emit('Youtube:clear')
     })
     socket.on('Youtube:volume', (length) => {
       socket.broadcast.emit('Youtube:volume', length)
@@ -27,8 +27,8 @@ module.exports = function (app, io, path) {
     socket.on('Youtube:previous', () => {
       socket.broadcast.emit('Youtube:previous')
     })
-    socket.on('Youtube:skipPlaylist', () => {
-      socket.broadcast.emit('Youtube:skipPlaylist')
+    socket.on('Youtube:bigNext', () => {
+      socket.broadcast.emit('Youtube:bigNext')
     })
   })
 }

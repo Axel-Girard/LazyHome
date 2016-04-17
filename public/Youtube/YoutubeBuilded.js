@@ -1,4 +1,4 @@
-/*globals React:true, ReactDOM:true, io:true, alert:true */
+/*globals React:true, ReactDOM:true, io:true, $:true */
 
 'use strict';
 
@@ -10,6 +10,7 @@ var CHIPS_OUT = 3000;
 var socket = io();
 
 var timeout;
+var OriginalIncrement = 1;
 
 /* Utils */
 
@@ -87,7 +88,12 @@ function onNewUrl(url) {
 function ControlButton(props) {
   return React.createElement(
     'a',
-    { className: 'waves-effect waves-light btn-large red lighten-3 btn-flat', onClick: props.onClick },
+    { className: 'waves-effect waves-light btn-large red lighten-3 btn-flat',
+      onClick: props.onClick,
+      onMouseUp: props.onMouseUp,
+      onMouseDown: props.onMouseDown,
+      onTouchEnd: props.onTouchEnd,
+      onTouchStart: props.onTouchStart },
     props.children
   );
 }
@@ -179,19 +185,44 @@ var YoutubePage = React.createClass({
   displayName: 'YoutubePage',
 
   getInitialState: function getInitialState() {
-    return { volume: 50 };
+    return { volume: 50,
+      duration: 0,
+      increment: OriginalIncrement,
+      down: false };
   },
-  onVolumeUp: function onVolumeUp() {
-    if (this.state.volume < 100) {
-      setVolume(this.state.volume + 5);
-      this.setState({ volume: this.state.volume + 5 });
-    }
+  autoInc: function autoInc(inc) {
+    var _this = this;
+
+    setTimeout(function () {
+      if (_this.state.down) {
+        _this.incVolume(inc);
+        _this.setState({ duration: _this.state.duration + 1 });
+        if (_this.state.increment < OriginalIncrement * 10 && _this.state.volume % 5 === 0) {
+          _this.setState({ increment: 5 * Math.ceil(_this.state.duration / 5) });
+        }
+        _this.autoInc(inc);
+      }
+    }, 500);
   },
-  onVolumeDown: function onVolumeDown() {
-    if (this.state.volume > 0) {
-      setVolume(this.state.volume - 5);
-      this.setState({ volume: this.state.volume - 5 });
-    }
+  incVolume: function incVolume(inc) {
+    var newVolume = inc ? Math.min(100, this.state.volume + this.state.increment) : Math.max(0, this.state.volume - this.state.increment);
+    this.setState({ volume: newVolume });
+    setVolume(newVolume);
+  },
+  onMouseDownInc: function onMouseDownInc() {
+    this.setState({ down: true });
+    this.incVolume(true);
+    this.autoInc(true);
+  },
+  onMouseDownDec: function onMouseDownDec() {
+    this.setState({ down: true });
+    this.incVolume(false);
+    this.autoInc(false);
+  },
+  onMouseUp: function onMouseUp() {
+    this.setState({ duration: 0,
+      increment: OriginalIncrement,
+      down: false });
   },
   render: function render() {
     return React.createElement(
@@ -271,7 +302,7 @@ var YoutubePage = React.createClass({
               { className: 'col s3 center-align' },
               React.createElement(
                 ControlButton,
-                { onClick: this.onVolumeUp },
+                { onTouchEnd: this.onMouseUp, onMouseUp: this.onMouseUp, onTouchStart: this.onMouseDownInc, onMouseDown: this.onMouseDownInc },
                 React.createElement('i', { className: 'fa fa-plus fa-5x' })
               )
             )
@@ -324,7 +355,7 @@ var YoutubePage = React.createClass({
               { className: 'col s3 offset-s3 center-align' },
               React.createElement(
                 'a',
-                { className: 'waves-effect waves-light btn-large red lighten-3 btn-flat', href: '/Youtube' },
+                { className: 'waves-effect waves-light btn-large red lighten-3 btn-flat', href: '/Youtube', target: '_blank' },
                 React.createElement(
                   'b',
                   null,
@@ -337,7 +368,7 @@ var YoutubePage = React.createClass({
               { className: 'col s3 offset-s3 center-align' },
               React.createElement(
                 ControlButton,
-                { onClick: this.onVolumeDown },
+                { onTouchEnd: this.onMouseUp, onMouseUp: this.onMouseUp, onTouchStart: this.onMouseDownDec, onMouseDown: this.onMouseDownDec },
                 React.createElement('i', { className: 'fa fa-minus fa-5x' })
               )
             )

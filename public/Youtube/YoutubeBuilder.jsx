@@ -1,4 +1,4 @@
-/*globals React:true, ReactDOM:true, io:true, alert:true */
+/*globals React:true, ReactDOM:true, io:true, $:true */
 
 'use strict'
 
@@ -10,6 +10,7 @@ var CHIPS_OUT = 3000
 var socket = io()
 
 var timeout
+var OriginalIncrement = 1
 
 /* Utils */
 
@@ -55,10 +56,10 @@ function setVolume (volume) {
   socket.emit('Youtube:volume', volume)
 }
 
-function showError(message, duration){
+function showError (message, duration) {
   clearTimeout(timeout)
   ReactDOM.render(<UniversalError>{message}</UniversalError>, document.getElementById('ErrorRow'))
-  timeout = setTimeout(() => ReactDOM.render(<UniversalError></UniversalError>, document.getElementById('ErrorRow')), duration)
+  timeout = setTimeout(() => ReactDOM.render(<UniversalError />, document.getElementById('ErrorRow')), duration)
 }
 
 function onNewUrl (url) {
@@ -80,7 +81,12 @@ function onNewUrl (url) {
 
 function ControlButton (props) {
   return (
-    <a className='waves-effect waves-light btn-large red lighten-3 btn-flat' onClick={props.onClick}>
+    <a className='waves-effect waves-light btn-large red lighten-3 btn-flat'
+      onClick={props.onClick}
+      onMouseUp={props.onMouseUp}
+      onMouseDown={props.onMouseDown}
+      onTouchEnd={props.onTouchEnd}
+      onTouchStart={props.onTouchStart}>
       {props.children}
     </a>
   )
@@ -123,7 +129,7 @@ var SearchBar = React.createClass({
 })
 
 function UniversalError (props) {
-  var text = props.children ? <div className="chip red white-text">{props.children}<i className="material-icons">close</i></div> : <div></div>
+  var text = props.children ? <div className='chip red white-text'>{props.children}<i className='material-icons'>close</i></div> : <div></div>
   return text
 }
 
@@ -147,20 +153,42 @@ var YoutubeDoor = React.createClass({
 
 var YoutubePage = React.createClass({
   getInitialState: function () {
-    return {volume: 50}
+    return {volume: 50,
+            duration: 0,
+            increment: OriginalIncrement,
+            down: false}
   },
-  onVolumeUp: function () {
-    if (this.state.volume < 100) {
-      setVolume(this.state.volume + 5)
-      this.setState({volume: this.state.volume + 5})
-
-    }
+  autoInc: function (inc) {
+    setTimeout(() => {
+      if (this.state.down) {
+        this.incVolume(inc)
+        this.setState({duration: this.state.duration + 1})
+        if (this.state.increment < OriginalIncrement * 10 && this.state.volume % 5 === 0) {
+          this.setState({increment: 5 * Math.ceil(this.state.duration / 5)})
+        }
+        this.autoInc(inc)
+      }
+    }, 500)
   },
-  onVolumeDown: function () {
-    if (this.state.volume > 0) {
-      setVolume(this.state.volume - 5)
-      this.setState({volume: this.state.volume - 5})
-    }
+  incVolume: function (inc) {
+    var newVolume = inc ? Math.min(100, this.state.volume + this.state.increment) : Math.max(0, this.state.volume - this.state.increment)
+    this.setState({volume: newVolume})
+    setVolume(newVolume)
+  },
+  onMouseDownInc: function () {
+    this.setState({down: true})
+    this.incVolume(true)
+    this.autoInc(true)
+  },
+  onMouseDownDec: function () {
+    this.setState({down: true})
+    this.incVolume(false)
+    this.autoInc(false)
+  },
+  onMouseUp: function () {
+    this.setState({duration: 0,
+                   increment: OriginalIncrement,
+                   down: false})
   },
   render: function () {
     return (
@@ -195,7 +223,7 @@ var YoutubePage = React.createClass({
                 <ControlButton onClick={onClickNext}><i className='fa fa-step-forward fa-5x'></i></ControlButton>
               </div>
               <div className='col s3 center-align'>
-                <ControlButton onClick={this.onVolumeUp}><i className='fa fa-plus fa-5x'></i></ControlButton>
+                <ControlButton onTouchEnd={this.onMouseUp} onMouseUp={this.onMouseUp} onTouchStart={this.onMouseDownInc} onMouseDown={this.onMouseDownInc}><i className='fa fa-plus fa-5x'></i></ControlButton>
               </div>
             </div>
             <div className='row'>
@@ -209,17 +237,17 @@ var YoutubePage = React.createClass({
                 <ControlButton onClick={onClickBigNext}><i className='fa fa-arrow-right fa-5x'></i></ControlButton>
               </div>
               <div className='col s3 center-align'>
-                <span id="VolumeText">{this.state.volume}</span>
+                <span id='VolumeText'>{this.state.volume}</span>
               </div>
             </div>
             <div className='row'>
               <div className='col s3 offset-s3 center-align'>
-                <a className='waves-effect waves-light btn-large red lighten-3 btn-flat' href='/Youtube'>
+                <a className='waves-effect waves-light btn-large red lighten-3 btn-flat' href='/Youtube' target='_blank'>
                   <b>Watch</b>
                 </a>
               </div>
               <div className='col s3 offset-s3 center-align'>
-                <ControlButton onClick={this.onVolumeDown}><i className='fa fa-minus fa-5x'></i></ControlButton>
+                <ControlButton onTouchEnd={this.onMouseUp} onMouseUp={this.onMouseUp} onTouchStart={this.onMouseDownDec} onMouseDown={this.onMouseDownDec}><i className='fa fa-minus fa-5x'></i></ControlButton>
               </div>
             </div>
           </div>

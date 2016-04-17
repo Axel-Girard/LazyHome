@@ -13,7 +13,8 @@
   "scripts": {
     "start": "nodemon server.js",
     "youtubeBabel": "babel ./public/Youtube/YoutubeBuilder.jsx --watch --out-file ./public/Youtube/YoutubeBuilded.js",
-    "shutdownBabel": "babel ./public/Shutdown/ShutdownBuilder.js --watch --out-file ./public/Shutdown/ShutdownBuilded.js"
+    "shutdownBabel": "babel ./public/Shutdown/ShutdownBuilder.jsx --watch --out-file ./public/Shutdown/ShutdownBuilded.js",
+    "componentsBabel": "babel ./public/CommonComponents.jsx --watch --out-file ./public/CommonComponents.js"
   },
   "jshintConfig": {
     "strict": true,

@@ -1,67 +1,127 @@
-/*globals React:true, ReactDOM:true */
-
 'use strict';
 
-var ShutdownElement = React.createClass({
-  displayName: 'ShutdownElement',
+/*globals React, ReactDOM, io, Door, UniversalError, CloseButton, SearchBar, ControlButton */
 
-  render: function render() {
-    return React.createElement(
-      'div',
-      { className: 'col s6' },
-      React.createElement(
+(function Shutdown() {
+  'use strict';
+
+  var MESSAGES = { errorUrlFormat: 'Wrong URL Format',
+    searchBarPlaceholder: 'Password ...',
+    title: 'Power',
+    logo: 'fa fa-power-off fa-5x' };
+  var COLOR = 'blue';
+  var CHIPS_OUT = 3000;
+
+  var socket = io();
+  var timeout;
+
+  var ShutdownDoor = React.createElement(
+    Door,
+    { color: COLOR, onClick: showShutdownPage },
+    React.createElement('i', { className: MESSAGES.logo }),
+    React.createElement('br', null),
+    'Power'
+  );
+
+  function showError(message, duration) {
+    clearTimeout(timeout);
+    ReactDOM.render(React.createElement(
+      UniversalError,
+      null,
+      message
+    ), document.getElementById('ShutdownErrorRow'));
+    timeout = setTimeout(function () {
+      return ReactDOM.render(React.createElement('div', null), document.getElementById('ShutdownErrorRow'));
+    }, duration);
+  }
+
+  function hideShutdownPage() {
+    ReactDOM.render(React.createElement('div', null), document.getElementById('page'));
+    ReactDOM.render(ShutdownDoor, document.getElementById('shutdown'));
+  }
+
+  function showShutdownPage() {
+    ReactDOM.render(React.createElement(ShutdownPage, null), document.getElementById('page'));
+    ReactDOM.render(React.createElement('div', null), document.getElementById('shutdown'));
+  }
+
+  function startShutdown(value) {
+    socket.emit('Shutdown:shutdown', value);
+  }
+
+  function cancelShutdown() {
+    socket.emit('Shutdown:cancel');
+  }
+
+  var ShutdownPage = React.createClass({
+    displayName: 'ShutdownPage',
+
+    render: function render() {
+      var cardClasses = 'card lighten-5 page ' + COLOR;
+      var logoClasses = MESSAGES.logo + ' ' + COLOR + '-text';
+      return React.createElement(
         'div',
-        { className: 'card blue center white-text waves-effect waves-block waves-light' },
+        { className: 'col s12' },
         React.createElement(
           'div',
-          { className: 'card-image activator' },
-          React.createElement('i', { className: 'fa fa-power-off fa-5x' })
-        ),
-        React.createElement(
-          'div',
-          { className: 'card-content activator' },
-          ' Power '
-        ),
-        React.createElement(
-          'div',
-          { className: 'card-reveal blue blue lighten-5' },
+          { className: cardClasses, id: 'ShutdownControls' },
           React.createElement(
-            'span',
-            { className: 'card-title blue-text' },
-            React.createElement('i', { className: 'fa fa-times-circle fa-5x' })
-          ),
-          React.createElement(
-            'form',
-            { action: '/', method: 'post', id: 'co_shutdown' },
-            React.createElement('input', { id: 'Shutdown_password', type: 'text', className: 'blue white-text' }),
-            React.createElement('input', { type: 'submit', hidden: true }),
+            'div',
+            { className: 'container' },
             React.createElement(
-              'a',
-              { className: 'waves-effect waves-light btn-large blue', id: 'Shutdown_shutdown' },
+              'div',
+              { className: 'row' },
               React.createElement(
-                'i',
-                { className: 'material-icons' },
-                'power_settings_new'
+                'div',
+                { className: 'col s11 black-text center-align', id: 'Title' },
+                React.createElement('i', { className: logoClasses }),
+                React.createElement(
+                  'h1',
+                  null,
+                  MESSAGES.title
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'col s1 black-text right-align' },
+                React.createElement(CloseButton, { onClick: hideShutdownPage })
               )
             ),
             React.createElement(
-              'a',
-              { className: 'waves-effect waves-light btn-large blue', id: 'Shutdown_cancel' },
+              'div',
+              { className: 'row' },
+              React.createElement('div', { className: 'col s12', id: 'ShutdownErrorRow' })
+            ),
+            React.createElement(
+              'div',
+              { className: 'row' },
               React.createElement(
-                'i',
-                { className: 'material-icons right' },
-                'loop'
-              ),
-              'Cancel'
+                'div',
+                { className: 'col s12' },
+                React.createElement(SearchBar, { color: COLOR, placeholder: MESSAGES.searchBarPlaceholder, onSubmit: startShutdown })
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'row' },
+              React.createElement(
+                'div',
+                { className: 'col s12 center-align' },
+                React.createElement(
+                  ControlButton,
+                  { color: COLOR, onClick: cancelShutdown },
+                  'Cancel'
+                )
+              )
             )
-          ),
-          React.createElement('span', { className: 'card-title blue-text', id: 'countdown' })
+          )
         )
-      )
-    );
-  }
-});
+      );
+    }
+  });
 
-if (window.location.href.indexOf('192.168.1') > 0) {
-  ReactDOM.render(React.createElement(ShutdownElement, null), document.getElementById('shutdown'));
-}
+  if (window.location.href.indexOf('192.168.1') > 0) {
+    console.log('render');
+    ReactDOM.render(ShutdownDoor, document.getElementById('shutdown'));
+  }
+})();

@@ -1,382 +1,312 @@
-/*globals React:true, ReactDOM:true, io:true, $:true */
-
 'use strict';
 
-var MESSAGES = { errorUrlFormat: 'Wrong URL Format',
-  searchBarPlaceholder: 'Search ...' };
+/*globals React, ReactDOM, io, Door, UniversalError, CloseButton, SearchBar, ControlButton */
 
-var CHIPS_OUT = 3000;
+(function Youtube() {
+  'use strict';
 
-var socket = io();
+  var MESSAGES = { errorUrlFormat: 'Wrong URL Format',
+    searchBarPlaceholder: 'Search ...',
+    title: 'Youtube',
+    logo: 'fa fa-youtube-play fa-5x' };
+  var COLOR = 'red';
+  var CHIPS_OUT = 3000;
 
-var timeout;
-var OriginalIncrement = 1;
+  var socket = io();
+  var timeout;
+  var OriginalIncrement = 1;
 
-/* Utils */
+  var YoutubeDoor = React.createElement(
+    Door,
+    { color: COLOR, onClick: showYoutubePage },
+    React.createElement('i', { className: MESSAGES.logo }),
+    React.createElement('br', null),
+    'Youtube'
+  );
 
-function videoURL_parser(url) {
-  var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-  var match = url.match(regExp);
-  return match && match[7].length === 11 ? match[7] : false;
-}
+  /* Utils */
 
-function playlistURL_parser(url) {
-  var regExp = /^.*(youtu.be\/|list=)([^#\&\?]*).*/;
-  var match = url.match(regExp);
-  return match && match[2] ? match[2] : false;
-}
+  function videoURL_parser(url) {
+    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+    var match = url.match(regExp);
+    return match && match[7].length === 11 ? match[7] : false;
+  }
 
-/* Triggered */
+  function playlistURL_parser(url) {
+    var regExp = /^.*(youtu.be\/|list=)([^#\&\?]*).*/;
+    var match = url.match(regExp);
+    return match && match[2] ? match[2] : false;
+  }
 
-function onClickPlay() {
-  socket.emit('Youtube:resume');
-}
+  /* Triggered */
 
-function onClickPause() {
-  socket.emit('Youtube:pause');
-}
+  function onClickPlay() {
+    socket.emit('Youtube:resume');
+  }
 
-function onClickPrevious() {
-  socket.emit('Youtube:previous');
-}
+  function onClickPause() {
+    socket.emit('Youtube:pause');
+  }
 
-function onClickNext() {
-  socket.emit('Youtube:next');
-}
+  function onClickPrevious() {
+    socket.emit('Youtube:previous');
+  }
 
-function onClickBigNext() {
-  socket.emit('Youtube:bigNext');
-}
+  function onClickNext() {
+    socket.emit('Youtube:next');
+  }
 
-function onClickClear() {
-  socket.emit('Youtube:clear');
-}
+  function onClickBigNext() {
+    socket.emit('Youtube:bigNext');
+  }
 
-function setVolume(volume) {
-  socket.emit('Youtube:volume', volume);
-}
+  function onClickClear() {
+    socket.emit('Youtube:clear');
+  }
 
-function showError(message, duration) {
-  clearTimeout(timeout);
-  ReactDOM.render(React.createElement(
-    UniversalError,
-    null,
-    message
-  ), document.getElementById('ErrorRow'));
-  timeout = setTimeout(function () {
-    return ReactDOM.render(React.createElement(UniversalError, null), document.getElementById('ErrorRow'));
-  }, duration);
-}
+  function setVolume(volume) {
+    socket.emit('Youtube:volume', volume);
+  }
 
-function onNewUrl(url) {
-  var id = videoURL_parser(url);
-  if (!id) {
-    id = playlistURL_parser(url);
+  function showError(message, duration) {
+    clearTimeout(timeout);
+    ReactDOM.render(React.createElement(
+      UniversalError,
+      null,
+      message
+    ), document.getElementById('YoutubeErrorRow'));
+    timeout = setTimeout(function () {
+      return ReactDOM.render(React.createElement('div', null), document.getElementById('YoutubeErrorRow'));
+    }, duration);
+  }
+
+  function onNewUrl(url) {
+    var id = videoURL_parser(url);
     if (!id) {
-      showError(MESSAGES.errorUrlFormat, CHIPS_OUT);
+      id = playlistURL_parser(url);
+      if (!id) {
+        showError(MESSAGES.errorUrlFormat, CHIPS_OUT);
+      } else {
+        socket.emit('Youtube:add', url);
+      }
     } else {
       socket.emit('Youtube:add', url);
     }
-  } else {
-    socket.emit('Youtube:add', url);
   }
-}
 
-/* Components */
-/* Buttons */
-
-function ControlButton(props) {
-  return React.createElement(
-    'a',
-    { className: 'waves-effect waves-light btn-large red lighten-3 btn-flat',
-      onClick: props.onClick,
-      onMouseUp: props.onMouseUp,
-      onMouseDown: props.onMouseDown,
-      onTouchEnd: props.onTouchEnd,
-      onTouchStart: props.onTouchStart },
-    props.children
-  );
-}
-
-var CloseButton = React.createClass({
-  displayName: 'CloseButton',
-
-  handleClick: function handleClick() {
-    ReactDOM.render(React.createElement(YoutubeDoor, null), document.getElementById('youtube'));
-  },
-  render: function render() {
-    return React.createElement('i', { className: 'fa fa-times fa-3x right-align valign', onClick: this.handleClick });
+  function hideYoutubePage() {
+    ReactDOM.render(React.createElement('div', null), document.getElementById('page'));
+    ReactDOM.render(YoutubeDoor, document.getElementById('youtube'));
   }
-});
 
-/* Special Elements */
-
-var SearchBar = React.createClass({
-  displayName: 'SearchBar',
-
-  getInitialState: function getInitialState() {
-    return { url: '' };
-  },
-  handleSubmit: function handleSubmit(event) {
-    event.preventDefault();
-    onNewUrl(this.state.url);
-    this.setState({ url: '' });
-    $(event.target).find('input')[0].blur();
-  },
-  handleChange: function handleChange(event) {
-    this.setState({ url: event.target.value });
-  },
-  render: function render() {
-    return React.createElement(
-      'form',
-      { action: '/', method: 'post', onSubmit: this.handleSubmit },
-      React.createElement(
-        'div',
-        { 'class': 'input-field' },
-        React.createElement('input', { id: 'search', type: 'text', className: 'red lighten-3 black-text', value: this.state.url, onChange: this.handleChange, placeholder: MESSAGES.searchBarPlaceholder })
-      ),
-      React.createElement('input', { type: 'submit', hidden: true })
-    );
+  function showYoutubePage() {
+    ReactDOM.render(React.createElement(YoutubePage, null), document.getElementById('page'));
+    ReactDOM.render(React.createElement('div', null), document.getElementById('youtube'));
   }
-});
 
-function UniversalError(props) {
-  var text = props.children ? React.createElement(
-    'div',
-    { className: 'chip red white-text' },
-    props.children,
-    React.createElement(
-      'i',
-      { className: 'material-icons' },
-      'close'
-    )
-  ) : React.createElement('div', null);
-  return text;
-}
+  /* Cards */
 
-/* Cards */
+  var YoutubePage = React.createClass({
+    displayName: 'YoutubePage',
 
-var YoutubeDoor = React.createClass({
-  displayName: 'YoutubeDoor',
+    getInitialState: function getInitialState() {
+      return { volume: 50,
+        duration: 0,
+        increment: OriginalIncrement,
+        down: false };
+    },
+    autoInc: function autoInc(inc) {
+      var _this = this;
 
-  handleClick: function handleClick() {
-    ReactDOM.render(React.createElement(YoutubePage, null), document.getElementById('youtube'));
-  },
-  render: function render() {
-    return React.createElement(
-      'div',
-      { onClick: this.handleClick, className: 'col s6' },
-      React.createElement(
-        'div',
-        { className: 'card red accent-4 center white-text waves-effect waves-block waves-light', id: 'YoutubeActivator' },
-        React.createElement(
-          'div',
-          null,
-          React.createElement('i', { className: 'fa fa-youtube-play fa-5x' }),
-          React.createElement('br', null),
-          'Youtube'
-        )
-      )
-    );
-  }
-});
-
-var YoutubePage = React.createClass({
-  displayName: 'YoutubePage',
-
-  getInitialState: function getInitialState() {
-    return { volume: 50,
-      duration: 0,
-      increment: OriginalIncrement,
-      down: false };
-  },
-  autoInc: function autoInc(inc) {
-    var _this = this;
-
-    setTimeout(function () {
-      if (_this.state.down) {
-        _this.incVolume(inc);
-        _this.setState({ duration: _this.state.duration + 1 });
-        if (_this.state.increment < OriginalIncrement * 10 && _this.state.volume % 5 === 0) {
-          _this.setState({ increment: 5 * Math.ceil(_this.state.duration / 5) });
+      setTimeout(function () {
+        if (_this.state.down) {
+          _this.incVolume(inc);
+          _this.setState({ duration: _this.state.duration + 1 });
+          if (_this.state.increment < OriginalIncrement * 10 && _this.state.volume % 5 === 0) {
+            _this.setState({ increment: 5 * Math.ceil(_this.state.duration / 5) });
+          }
+          _this.autoInc(inc);
         }
-        _this.autoInc(inc);
-      }
-    }, 500);
-  },
-  incVolume: function incVolume(inc) {
-    var newVolume = inc ? Math.min(100, this.state.volume + this.state.increment) : Math.max(0, this.state.volume - this.state.increment);
-    this.setState({ volume: newVolume });
-    setVolume(newVolume);
-  },
-  onMouseDownInc: function onMouseDownInc() {
-    this.setState({ down: true });
-    this.incVolume(true);
-    this.autoInc(true);
-  },
-  onMouseDownDec: function onMouseDownDec() {
-    this.setState({ down: true });
-    this.incVolume(false);
-    this.autoInc(false);
-  },
-  onMouseUp: function onMouseUp() {
-    this.setState({ duration: 0,
-      increment: OriginalIncrement,
-      down: false });
-  },
-  render: function render() {
-    return React.createElement(
-      'div',
-      { className: 'col s12' },
-      React.createElement(
+      }, 500);
+    },
+    incVolume: function incVolume(inc) {
+      var newVolume = inc ? Math.min(100, this.state.volume + this.state.increment) : Math.max(0, this.state.volume - this.state.increment);
+      this.setState({ volume: newVolume });
+      setVolume(newVolume);
+    },
+    onMouseDownInc: function onMouseDownInc() {
+      this.setState({ down: true });
+      this.incVolume(true);
+      this.autoInc(true);
+    },
+    onMouseDownDec: function onMouseDownDec() {
+      this.setState({ down: true });
+      this.incVolume(false);
+      this.autoInc(false);
+    },
+    onMouseUp: function onMouseUp() {
+      this.setState({ duration: 0,
+        increment: OriginalIncrement,
+        down: false });
+    },
+    render: function render() {
+      var cardClasses = 'card lighten-5 page ' + COLOR;
+      var logoClasses = MESSAGES.logo + ' ' + COLOR + '-text';
+      return React.createElement(
         'div',
-        { className: 'card red lighten-5', id: 'YoutubeControls' },
+        { className: 'col s12' },
         React.createElement(
           'div',
-          { className: 'container' },
+          { className: cardClasses, id: 'YoutubeControls' },
           React.createElement(
             'div',
-            { className: 'row' },
+            { className: 'container' },
             React.createElement(
               'div',
-              { className: 'col s11 black-text center-align', id: 'Title' },
-              React.createElement('i', { className: 'fa fa-youtube-play fa-5x red-text' }),
+              { className: 'row' },
               React.createElement(
-                'h1',
-                null,
-                'Youtube'
-              )
-            ),
-            React.createElement(
-              'div',
-              { className: 'col s1 black-text right-align' },
-              React.createElement(CloseButton, null)
-            )
-          ),
-          React.createElement(
-            'div',
-            { className: 'row' },
-            React.createElement('div', { className: 'col s12', id: 'ErrorRow' })
-          ),
-          React.createElement(
-            'div',
-            { className: 'row' },
-            React.createElement(
-              'div',
-              { className: 'col s12' },
-              React.createElement(SearchBar, null)
-            )
-          ),
-          React.createElement(
-            'div',
-            { className: 'row' },
-            React.createElement(
-              'div',
-              { className: 'col s3 center-align' },
-              React.createElement(
-                ControlButton,
-                { onClick: onClickPrevious },
-                React.createElement('i', { className: 'fa fa-step-backward fa-5x' })
-              )
-            ),
-            React.createElement(
-              'div',
-              { className: 'col s3 center-align' },
-              React.createElement(
-                ControlButton,
-                { onClick: onClickPlay },
-                React.createElement('i', { className: 'fa fa-play fa-5x' })
-              )
-            ),
-            React.createElement(
-              'div',
-              { className: 'col s3 center-align' },
-              React.createElement(
-                ControlButton,
-                { onClick: onClickNext },
-                React.createElement('i', { className: 'fa fa-step-forward fa-5x' })
-              )
-            ),
-            React.createElement(
-              'div',
-              { className: 'col s3 center-align' },
-              React.createElement(
-                ControlButton,
-                { onTouchEnd: this.onMouseUp, onMouseUp: this.onMouseUp, onTouchStart: this.onMouseDownInc, onMouseDown: this.onMouseDownInc },
-                React.createElement('i', { className: 'fa fa-plus fa-5x' })
-              )
-            )
-          ),
-          React.createElement(
-            'div',
-            { className: 'row' },
-            React.createElement(
-              'div',
-              { className: 'col s3 center-align' },
-              React.createElement(
-                ControlButton,
-                { onClick: onClickClear },
-                React.createElement('i', { className: 'fa fa-trash fa-5x' })
-              )
-            ),
-            React.createElement(
-              'div',
-              { className: 'col s3 center-align' },
-              React.createElement(
-                ControlButton,
-                { onClick: onClickPause },
-                React.createElement('i', { className: 'fa fa-pause fa-5x' })
-              )
-            ),
-            React.createElement(
-              'div',
-              { className: 'col s3 center-align' },
-              React.createElement(
-                ControlButton,
-                { onClick: onClickBigNext },
-                React.createElement('i', { className: 'fa fa-arrow-right fa-5x' })
-              )
-            ),
-            React.createElement(
-              'div',
-              { className: 'col s3 center-align' },
-              React.createElement(
-                'span',
-                { id: 'VolumeText' },
-                this.state.volume
-              )
-            )
-          ),
-          React.createElement(
-            'div',
-            { className: 'row' },
-            React.createElement(
-              'div',
-              { className: 'col s3 offset-s3 center-align' },
-              React.createElement(
-                'a',
-                { className: 'waves-effect waves-light btn-large red lighten-3 btn-flat', href: '/Youtube', target: '_blank' },
+                'div',
+                { className: 'col s11 black-text center-align', id: 'Title' },
+                React.createElement('i', { className: logoClasses }),
                 React.createElement(
-                  'b',
+                  'h1',
                   null,
-                  'Watch'
+                  MESSAGES.title
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'col s1 black-text right-align' },
+                React.createElement(CloseButton, { onClick: hideYoutubePage })
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'row' },
+              React.createElement('div', { className: 'col s12', id: 'YoutubeErrorRow' })
+            ),
+            React.createElement(
+              'div',
+              { className: 'row' },
+              React.createElement(
+                'div',
+                { className: 'col s12' },
+                React.createElement(SearchBar, { color: COLOR, placeholder: MESSAGES.searchBarPlaceholder, onSubmit: onNewUrl })
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'row' },
+              React.createElement(
+                'div',
+                { className: 'col s3 center-align' },
+                React.createElement(
+                  ControlButton,
+                  { color: COLOR, onClick: onClickPrevious },
+                  React.createElement('i', { className: 'fa fa-step-backward fa-5x' })
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'col s3 center-align' },
+                React.createElement(
+                  ControlButton,
+                  { color: COLOR, onClick: onClickPlay },
+                  React.createElement('i', { className: 'fa fa-play fa-5x' })
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'col s3 center-align' },
+                React.createElement(
+                  ControlButton,
+                  { color: COLOR, onClick: onClickNext },
+                  React.createElement('i', { className: 'fa fa-step-forward fa-5x' })
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'col s3 center-align' },
+                React.createElement(
+                  ControlButton,
+                  { color: COLOR, onTouchEnd: this.onMouseUp, onMouseUp: this.onMouseUp,
+                    onTouchStart: this.onMouseDownInc, onMouseDown: this.onMouseDownInc },
+                  React.createElement('i', { className: 'fa fa-plus fa-5x' })
                 )
               )
             ),
             React.createElement(
               'div',
-              { className: 'col s3 offset-s3 center-align' },
+              { className: 'row' },
               React.createElement(
-                ControlButton,
-                { onTouchEnd: this.onMouseUp, onMouseUp: this.onMouseUp, onTouchStart: this.onMouseDownDec, onMouseDown: this.onMouseDownDec },
-                React.createElement('i', { className: 'fa fa-minus fa-5x' })
+                'div',
+                { className: 'col s3 center-align' },
+                React.createElement(
+                  ControlButton,
+                  { color: COLOR, onClick: onClickClear },
+                  React.createElement('i', { className: 'fa fa-trash fa-5x' })
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'col s3 center-align' },
+                React.createElement(
+                  ControlButton,
+                  { color: COLOR, onClick: onClickPause },
+                  React.createElement('i', { className: 'fa fa-pause fa-5x' })
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'col s3 center-align' },
+                React.createElement(
+                  ControlButton,
+                  { color: COLOR, onClick: onClickBigNext },
+                  React.createElement('i', { className: 'fa fa-arrow-right fa-5x' })
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'col s3 center-align' },
+                React.createElement(
+                  'span',
+                  { id: 'VolumeText' },
+                  this.state.volume
+                )
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'row' },
+              React.createElement(
+                'div',
+                { className: 'col s3 offset-s3 center-align' },
+                React.createElement(
+                  'a',
+                  { className: 'waves-effect waves-light btn-large red lighten-3 btn-flat', href: '/Youtube', target: '_blank' },
+                  React.createElement(
+                    'b',
+                    null,
+                    'Watch'
+                  )
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'col s3 offset-s3 center-align' },
+                React.createElement(
+                  ControlButton,
+                  { color: COLOR, onTouchEnd: this.onMouseUp, onMouseUp: this.onMouseUp,
+                    onTouchStart: this.onMouseDownDec, onMouseDown: this.onMouseDownDec },
+                  React.createElement('i', { className: 'fa fa-minus fa-5x' })
+                )
               )
             )
           )
         )
-      )
-    );
-  }
-});
+      );
+    }
+  });
 
-ReactDOM.render(React.createElement(YoutubeDoor, null), document.getElementById('youtube'));
+  ReactDOM.render(YoutubeDoor, document.getElementById('youtube'));
+})();

@@ -1,33 +1,82 @@
-/*globals React:true, ReactDOM:true */
+/*globals React, ReactDOM, io, Door, UniversalError, CloseButton, SearchBar, ControlButton */
 
-'use strict'
+(function Shutdown () {
+  'use strict'
 
-var ShutdownElement = React.createClass({
-  render: () => {
-    return (<div className='col s6'>
-            <div className='card blue center white-text waves-effect waves-block waves-light'>
-            <div className='card-image activator'>
-            <i className='fa fa-power-off fa-5x'></i>
-            </div>
+  var MESSAGES = {errorUrlFormat: 'Wrong URL Format',
+                  searchBarPlaceholder: 'Password ...',
+                  title: 'Power',
+                  logo: 'fa fa-power-off fa-5x'}
+  var COLOR = 'blue'
+  var CHIPS_OUT = 3000
 
-            <div className='card-content activator'> Power </div>
-            <div className='card-reveal blue blue lighten-5'>
-            <span className='card-title blue-text'><i className='fa fa-times-circle fa-5x'></i></span>
+  var socket = io()
+  var timeout
 
-            <form action='/' method='post' id='co_shutdown'>
-            <input id='Shutdown_password' type='text' className='blue white-text'/>
-            <input type='submit' hidden/>
-            <a className='waves-effect waves-light btn-large blue' id='Shutdown_shutdown'><i className='material-icons'>power_settings_new</i></a>
-            <a className='waves-effect waves-light btn-large blue' id='Shutdown_cancel'><i className='material-icons right'>loop</i>Cancel</a>
-            </form>
-            <span className='card-title blue-text' id='countdown'></span>
-            </div>
-            </div>
-            </div>
-           )
+  var ShutdownDoor = (<Door color={COLOR} onClick={showShutdownPage}><i className={MESSAGES.logo}></i><br/>Power</Door>)
+
+  function showError (message, duration) {
+    clearTimeout(timeout)
+    ReactDOM.render(<UniversalError>{message}</UniversalError>, document.getElementById('ShutdownErrorRow'))
+    timeout = setTimeout(() => ReactDOM.render(<div></div>, document.getElementById('ShutdownErrorRow')), duration)
   }
-})
 
-if (window.location.href.indexOf('192.168.1') > 0) {
-  ReactDOM.render(<ShutdownElement />, document.getElementById('shutdown'))
-}
+  function hideShutdownPage () {
+    ReactDOM.render(<div></div>, document.getElementById('page'))
+    ReactDOM.render(ShutdownDoor, document.getElementById('shutdown'))
+  }
+
+  function showShutdownPage () {
+    ReactDOM.render(<ShutdownPage />, document.getElementById('page'))
+    ReactDOM.render(<div></div>, document.getElementById('shutdown'))
+  }
+
+  function startShutdown (value) {
+    socket.emit('Shutdown:shutdown', value)
+  }
+
+  function cancelShutdown () {
+    socket.emit('Shutdown:cancel')
+  }
+
+  var ShutdownPage = React.createClass({
+    render: function () {
+      var cardClasses = 'card lighten-5 page ' + COLOR
+      var logoClasses = MESSAGES.logo + ' ' + COLOR + '-text'
+      return (
+        <div className='col s12'>
+          <div className={cardClasses} id='ShutdownControls'>
+            <div className='container'>
+              <div className='row'>
+                <div className='col s11 black-text center-align' id='Title'>
+                  <i className={logoClasses}></i><h1>{MESSAGES.title}</h1>
+                </div>
+                <div className='col s1 black-text right-align'>
+                  <CloseButton onClick={hideShutdownPage}/>
+                </div>
+              </div>
+              <div className='row'>
+                <div className='col s12' id='ShutdownErrorRow'>
+                </div>
+              </div>
+              <div className='row'>
+                <div className='col s12'>
+                  <SearchBar color={COLOR} placeholder={MESSAGES.searchBarPlaceholder} onSubmit={startShutdown}/>
+                </div>
+              </div>
+              <div className='row'>
+                <div className='col s12 center-align'>
+                  <ControlButton color={COLOR} onClick={cancelShutdown}>Cancel</ControlButton>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) }
+  })
+
+  if (window.location.href.indexOf('192.168.1') > 0) {
+    console.log('render')
+    ReactDOM.render(ShutdownDoor, document.getElementById('shutdown'))
+  }
+})()

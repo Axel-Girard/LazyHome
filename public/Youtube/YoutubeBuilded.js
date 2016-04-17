@@ -6,9 +6,9 @@
   'use strict';
 
   var MESSAGES = { errorUrlFormat: 'Wrong URL Format',
-    searchBarPlaceholder: 'Search ...',
-    title: 'Youtube',
-    logo: 'fa fa-youtube-play fa-5x' };
+                  searchBarPlaceholder: 'Search ...',
+                  title: 'Youtube',
+                  logo: 'fa fa-youtube-play fa-5x' };
   var COLOR = 'red';
   var CHIPS_OUT = 3000;
 
@@ -111,9 +111,9 @@
 
     getInitialState: function getInitialState() {
       return { volume: 50,
-        duration: 0,
-        increment: OriginalIncrement,
-        down: false };
+              duration: 0,
+              increment: OriginalIncrement,
+              down: false };
     },
     autoInc: function autoInc(inc) {
       var _this = this;
@@ -146,8 +146,8 @@
     },
     onMouseUp: function onMouseUp() {
       this.setState({ duration: 0,
-        increment: OriginalIncrement,
-        down: false });
+                     increment: OriginalIncrement,
+                     down: false });
     },
     render: function render() {
       var cardClasses = 'card lighten-5 page ' + COLOR;
@@ -230,7 +230,7 @@
                 React.createElement(
                   ControlButton,
                   { color: COLOR, onTouchEnd: this.onMouseUp, onMouseUp: this.onMouseUp,
-                    onTouchStart: this.onMouseDownInc, onMouseDown: this.onMouseDownInc },
+                   onTouchStart: this.onMouseDownInc, onMouseDown: this.onMouseDownInc },
                   React.createElement('i', { className: 'fa fa-plus fa-5x' })
                 )
               )
@@ -297,7 +297,7 @@
                 React.createElement(
                   ControlButton,
                   { color: COLOR, onTouchEnd: this.onMouseUp, onMouseUp: this.onMouseUp,
-                    onTouchStart: this.onMouseDownDec, onMouseDown: this.onMouseDownDec },
+                   onTouchStart: this.onMouseDownDec, onMouseDown: this.onMouseDownDec },
                   React.createElement('i', { className: 'fa fa-minus fa-5x' })
                 )
               )

@@ -5,35 +5,48 @@
 
 /* props : color, onClick, children */
 
-function ControlButton(props) {
-  var classes = 'waves-effect waves-light btn-large lighten-3 btn-flat ' + props.color;
-  return React.createElement(
-    'a',
-    { className: classes, onClick: props.onClick },
-    props.children
-  );
-}
+var ControlButton = React.createClass({
+  displayName: 'ControlButton',
+
+  render: function render() {
+    var classes = 'waves-effect waves-light btn-large lighten-3 btn-flat ' + this.props.color;
+    return React.createElement(
+      'a',
+      { className: classes, onClick: this.props.onClick, onTouchEnd: this.props.onTouchEnd, onMouseUp: this.props.onMouseUp,
+        onTouchStart: this.props.onTouchStart, onMouseDown: this.props.onMouseDown },
+      this.props.children
+    );
+  }
+});
 
 /* props : onClick */
-function CloseButton(props) {
-  return React.createElement('i', { className: 'fa fa-times fa-3x right-align valign', onClick: props.onClick });
-}
+var CloseButton = React.createClass({
+  displayName: 'CloseButton',
+
+  render: function render() {
+    return React.createElement('i', { className: 'fa fa-times fa-3x right-align valign', onClick: this.props.onClick });
+  }
+});
 
 /* props : color, children */
-function UniversalError(props) {
-  var classes = 'chip white-text ' + props.color;
-  var text = props.children ? React.createElement(
-    'div',
-    { className: classes },
-    props.children,
-    React.createElement(
-      'i',
-      { className: 'material-icons' },
-      'close'
-    )
-  ) : React.createElement('div', null);
-  return text;
-}
+var UniversalError = React.createClass({
+  displayName: 'UniversalError',
+
+  render: function render() {
+    var classes = 'chip white-text ' + this.props.color;
+    var text = this.props.children ? React.createElement(
+      'div',
+      { className: classes },
+      this.props.children,
+      React.createElement(
+        'i',
+        { className: 'material-icons' },
+        'close'
+      )
+    ) : React.createElement('div', null);
+    return text;
+  }
+});
 
 /* props : color, placeholder, onSubmit */
 var SearchBar = React.createClass({
@@ -67,15 +80,19 @@ var SearchBar = React.createClass({
 });
 
 /* props : color, onClick, children */
-function Door(props) {
-  var classes = 'card accent-4 center white-text waves-effect waves-block waves-light activator ' + props.color;
-  return React.createElement(
-    'div',
-    { onClick: props.onClick, className: 'col s6' },
-    React.createElement(
+var Door = React.createClass({
+  displayName: 'Door',
+
+  render: function render() {
+    var classes = 'card accent-4 center white-text waves-effect waves-block waves-light activator ' + this.props.color;
+    return React.createElement(
       'div',
-      { className: classes },
-      props.children
-    )
-  );
-}
+      { onClick: this.props.onClick, className: 'col s6' },
+      React.createElement(
+        'div',
+        { className: classes },
+        this.props.children
+      )
+    );
+  }
+});

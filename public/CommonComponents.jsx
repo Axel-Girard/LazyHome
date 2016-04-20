@@ -4,28 +4,35 @@
 'use strict'
 
 /* props : color, onClick, children */
-function ControlButton (props) {
-  var classes = 'waves-effect waves-light btn-large lighten-3 btn-flat ' + props.color
-  return (
-    <a className={classes} onClick={props.onClick}>
-      {props.children}
-    </a>
-  )
-}
+var ControlButton = React.createClass({
+  render: function () {
+    var classes = 'waves-effect waves-light btn-large lighten-3 btn-flat ' + this.props.color
+    return (
+      <a className={classes} onClick={this.props.onClick} onTouchEnd={this.props.onTouchEnd} onMouseUp={this.props.onMouseUp}
+        onTouchStart={this.props.onTouchStart} onMouseDown={this.props.onMouseDown}>
+        {this.props.children}
+      </a>
+    )
+  }
+})
 
 /* props : onClick */
-function CloseButton (props) {
-  return (
-    <i className='fa fa-times fa-3x right-align valign' onClick={props.onClick}></i>
-  )
-}
+var CloseButton = React.createClass({
+  render: function () {
+    return (
+      <i className='fa fa-times fa-3x right-align valign' onClick={this.props.onClick}></i>
+    )
+  }
+})
 
 /* props : color, children */
-function UniversalError (props) {
-  var classes = 'chip white-text ' + props.color
-  var text = props.children ? <div className={classes}>{props.children}<i className='material-icons'>close</i></div> : <div></div>
-  return text
-}
+var UniversalError = React.createClass({
+  render: function () {
+    var classes = 'chip white-text ' + this.props.color
+    var text = this.props.children ? <div className={classes}>{this.props.children}<i className='material-icons'>close</i></div> : <div></div>
+    return text
+  }
+})
 
 /* props : color, placeholder, onSubmit */
 var SearchBar = React.createClass({
@@ -54,13 +61,15 @@ var SearchBar = React.createClass({
 })
 
 /* props : color, onClick, children */
-function Door (props) {
-  var classes = 'card accent-4 center white-text waves-effect waves-block waves-light activator ' + props.color
-  return (
-    <div onClick={props.onClick} className='col s6'>
-      <div className={classes}>
-        {props.children}
+var Door = React.createClass({
+  render: function () {
+    var classes = 'card accent-4 center white-text waves-effect waves-block waves-light activator ' + this.props.color
+    return (
+      <div onClick={this.props.onClick} className='col s6'>
+        <div className={classes}>
+          {this.props.children}
+        </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
+})

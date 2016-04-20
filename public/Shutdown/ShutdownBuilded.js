@@ -1,6 +1,6 @@
 'use strict';
 
-/*globals React, ReactDOM, io, Door, UniversalError, CloseButton, SearchBar, ControlButton */
+/*globals React, ReactDOM, io, Door, CloseButton, SearchBar, ControlButton */
 
 (function Shutdown() {
   'use strict';
@@ -10,10 +10,8 @@
     title: 'Power',
     logo: 'fa fa-power-off fa-5x' };
   var COLOR = 'blue';
-  var CHIPS_OUT = 3000;
 
   var socket = io();
-  var timeout;
 
   var ShutdownDoor = React.createElement(
     Door,
@@ -22,18 +20,6 @@
     React.createElement('br', null),
     'Power'
   );
-
-  function showError(message, duration) {
-    clearTimeout(timeout);
-    ReactDOM.render(React.createElement(
-      UniversalError,
-      null,
-      message
-    ), document.getElementById('ShutdownErrorRow'));
-    timeout = setTimeout(function () {
-      return ReactDOM.render(React.createElement('div', null), document.getElementById('ShutdownErrorRow'));
-    }, duration);
-  }
 
   function hideShutdownPage() {
     ReactDOM.render(React.createElement('div', null), document.getElementById('page'));
@@ -121,7 +107,6 @@
   });
 
   if (window.location.href.indexOf('192.168.1') > 0) {
-    console.log('render');
     ReactDOM.render(ShutdownDoor, document.getElementById('shutdown'));
   }
 })();

@@ -6,14 +6,14 @@
   'use strict';
 
   var MESSAGES = { errorUrlFormat: 'Wrong URL Format',
-                  searchBarPlaceholder: 'Search ...',
-                  title: 'Youtube',
-                  logo: 'fa fa-youtube-play fa-5x' };
+    searchBarPlaceholder: 'Search ...',
+    title: 'Youtube',
+    logo: 'fa fa-youtube-play fa-5x' };
   var COLOR = 'red';
   var CHIPS_OUT = 3000;
 
   var socket = io();
-  var timeout;
+  var timeout, timeoutClick;
   var OriginalIncrement = 1;
 
   var YoutubeDoor = React.createElement(
@@ -111,23 +111,23 @@
 
     getInitialState: function getInitialState() {
       return { volume: 50,
-              duration: 0,
-              increment: OriginalIncrement,
-              down: false };
+        duration: 0,
+        increment: OriginalIncrement,
+        down: false };
     },
     autoInc: function autoInc(inc) {
       var _this = this;
 
-      setTimeout(function () {
-        if (_this.state.down) {
-          _this.incVolume(inc);
-          _this.setState({ duration: _this.state.duration + 1 });
-          if (_this.state.increment < OriginalIncrement * 10 && _this.state.volume % 5 === 0) {
-            _this.setState({ increment: 5 * Math.ceil(_this.state.duration / 5) });
-          }
-          _this.autoInc(inc);
+      if (this.state.down) {
+        this.incVolume(inc);
+        this.setState({ duration: this.state.duration + 1 });
+        if (this.state.increment < OriginalIncrement * 10 && this.state.volume % 5 === 0) {
+          this.setState({ increment: 5 * Math.ceil(this.state.duration / 5) });
         }
-      }, 500);
+        timeoutClick = setTimeout(function () {
+          _this.autoInc(inc);
+        }, 500);
+      }
     },
     incVolume: function incVolume(inc) {
       var newVolume = inc ? Math.min(100, this.state.volume + this.state.increment) : Math.max(0, this.state.volume - this.state.increment);
@@ -135,19 +135,42 @@
       setVolume(newVolume);
     },
     onMouseDownInc: function onMouseDownInc() {
+      var _this2 = this;
+
       this.setState({ down: true });
-      this.incVolume(true);
-      this.autoInc(true);
+      setTimeout(function () {
+        _this2.autoInc(true);
+      }, 1);
     },
     onMouseDownDec: function onMouseDownDec() {
+      var _this3 = this;
+
       this.setState({ down: true });
-      this.incVolume(false);
-      this.autoInc(false);
+      setTimeout(function () {
+        _this3.autoInc(false);
+      }, 1);
+    },
+    onTouchStartInc: function onTouchStartInc() {
+      var _this4 = this;
+
+      this.setState({ down: true });
+      setTimeout(function () {
+        _this4.autoInc(true);
+      }, 1);
+    },
+    onTouchStartDec: function onTouchStartDec() {
+      var _this5 = this;
+
+      this.setState({ down: true });
+      setTimeout(function () {
+        _this5.autoInc(false);
+      }, 1);
     },
     onMouseUp: function onMouseUp() {
+      clearTimeout(timeoutClick);
       this.setState({ duration: 0,
-                     increment: OriginalIncrement,
-                     down: false });
+        increment: OriginalIncrement,
+        down: false });
     },
     render: function render() {
       var cardClasses = 'card lighten-5 page ' + COLOR;
@@ -230,7 +253,7 @@
                 React.createElement(
                   ControlButton,
                   { color: COLOR, onTouchEnd: this.onMouseUp, onMouseUp: this.onMouseUp,
-                   onTouchStart: this.onMouseDownInc, onMouseDown: this.onMouseDownInc },
+                    onTouchStart: this.onTouchStartInc, onMouseDown: this.onMouseDownInc },
                   React.createElement('i', { className: 'fa fa-plus fa-5x' })
                 )
               )
@@ -297,7 +320,7 @@
                 React.createElement(
                   ControlButton,
                   { color: COLOR, onTouchEnd: this.onMouseUp, onMouseUp: this.onMouseUp,
-                   onTouchStart: this.onMouseDownDec, onMouseDown: this.onMouseDownDec },
+                    onTouchStart: this.onTouchStartDec, onMouseDown: this.onMouseDownDec },
                   React.createElement('i', { className: 'fa fa-minus fa-5x' })
                 )
               )

@@ -11,7 +11,7 @@
   var CHIPS_OUT = 3000
 
   var socket = io()
-  var timeout
+  var timeout, timeoutClick
   var OriginalIncrement = 1
 
   var YoutubeDoor = (<Door color={COLOR} onClick={showYoutubePage}><i className={MESSAGES.logo}></i><br/>Youtube</Door>)
@@ -100,16 +100,14 @@
               down: false}
     },
     autoInc: function (inc) {
-      setTimeout(() => {
-        if (this.state.down) {
-          this.incVolume(inc)
-          this.setState({duration: this.state.duration + 1})
-          if (this.state.increment < OriginalIncrement * 10 && this.state.volume % 5 === 0) {
-            this.setState({increment: 5 * Math.ceil(this.state.duration / 5)})
-          }
-          this.autoInc(inc)
+      if (this.state.down) {
+        this.incVolume(inc)
+        this.setState({duration: this.state.duration + 1})
+        if (this.state.increment < OriginalIncrement * 10 && this.state.volume % 5 === 0) {
+          this.setState({increment: 5 * Math.ceil(this.state.duration / 5)})
         }
-      }, 500)
+        timeoutClick = setTimeout(() => { this.autoInc(inc) }, 500)
+      }
     },
     incVolume: function (inc) {
       var newVolume = inc ? Math.min(100, this.state.volume + this.state.increment) : Math.max(0, this.state.volume - this.state.increment)
@@ -118,15 +116,22 @@
     },
     onMouseDownInc: function () {
       this.setState({down: true})
-      this.incVolume(true)
-      this.autoInc(true)
+      setTimeout(() => { this.autoInc(true) }, 1)
     },
     onMouseDownDec: function () {
       this.setState({down: true})
-      this.incVolume(false)
-      this.autoInc(false)
+      setTimeout(() => { this.autoInc(false) }, 1)
+    },
+    onTouchStartInc: function () {
+      this.setState({down: true})
+      setTimeout(() => { this.autoInc(true) }, 1)
+    },
+    onTouchStartDec: function () {
+      this.setState({down: true})
+      setTimeout(() => { this.autoInc(false) }, 1)
     },
     onMouseUp: function () {
+      clearTimeout(timeoutClick)
       this.setState({duration: 0,
                      increment: OriginalIncrement,
                      down: false})
@@ -167,7 +172,7 @@
                 </div>
                 <div className='col s3 center-align'>
                   <ControlButton color={COLOR} onTouchEnd={this.onMouseUp} onMouseUp={this.onMouseUp}
-                    onTouchStart={this.onMouseDownInc} onMouseDown={this.onMouseDownInc}><i className='fa fa-plus fa-5x'></i></ControlButton>
+                    onTouchStart={this.onTouchStartInc} onMouseDown={this.onMouseDownInc}><i className='fa fa-plus fa-5x'></i></ControlButton>
                 </div>
               </div>
               <div className='row'>
@@ -192,7 +197,7 @@
                 </div>
                 <div className='col s3 offset-s3 center-align'>
                   <ControlButton color={COLOR} onTouchEnd={this.onMouseUp} onMouseUp={this.onMouseUp}
-                    onTouchStart={this.onMouseDownDec} onMouseDown={this.onMouseDownDec}><i className='fa fa-minus fa-5x'></i></ControlButton>
+                    onTouchStart={this.onTouchStartDec} onMouseDown={this.onMouseDownDec}><i className='fa fa-minus fa-5x'></i></ControlButton>
                 </div>
               </div>
             </div>

@@ -1,4 +1,4 @@
-/*globals React, ReactDOM, io, Door, UniversalError, CloseButton, SearchBar, ControlButton */
+/*globals React, ReactDOM, io, Door, CloseButton, SearchBar, ControlButton */
 
 (function Shutdown () {
   'use strict'
@@ -8,18 +8,10 @@
                   title: 'Power',
                   logo: 'fa fa-power-off fa-5x'}
   var COLOR = 'blue'
-  var CHIPS_OUT = 3000
 
   var socket = io()
-  var timeout
 
   var ShutdownDoor = (<Door color={COLOR} onClick={showShutdownPage}><i className={MESSAGES.logo}></i><br/>Power</Door>)
-
-  function showError (message, duration) {
-    clearTimeout(timeout)
-    ReactDOM.render(<UniversalError>{message}</UniversalError>, document.getElementById('ShutdownErrorRow'))
-    timeout = setTimeout(() => ReactDOM.render(<div></div>, document.getElementById('ShutdownErrorRow')), duration)
-  }
 
   function hideShutdownPage () {
     ReactDOM.render(<div></div>, document.getElementById('page'))
@@ -76,7 +68,6 @@
   })
 
   if (window.location.href.indexOf('192.168.1') > 0) {
-    console.log('render')
     ReactDOM.render(ShutdownDoor, document.getElementById('shutdown'))
   }
 })()

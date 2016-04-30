@@ -17,8 +17,6 @@ function showShutdown () {
   ReactDOM.render(<Shutdown close={hidePage}/>, document.getElementById('page'))
 }
 
-// var ShutdownDoor = ()
-
 var App = React.createClass({
   render: function () {
     return (

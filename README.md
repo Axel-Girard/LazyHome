@@ -1,18 +1,23 @@
 # LazyHome
-I'm lazy, I made a website to be more lazy :sleeping:
+I'm lazy, I'm made a website to be more lazy :sleeping:
+
+# Components
+## Youtube
+Allow to play a video / playlist in the player and control it.
+## Shutdown
+Allow to shutdown the server (computer). 
 
 # Commands
 Set up : 
 ```bash
 npm install
+npm install -g watchify
 ```
 Start : 
 ```bash
 npm start
 ```
-Compile files : 
+Build : 
 ```bash
-npm run youtubeBabel
-npm run shutdownBabel
-npm run componentsBabel
+npm run build
 ```

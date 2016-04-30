@@ -1,4 +1,5 @@
 /* globals io:true, YT:true, $:true */
+/* eslint-disable no-unused-vars */
 
 'use strict'
 
@@ -56,6 +57,10 @@ socket.on('Youtube:previous', function () {
 
 socket.on('Youtube:bigNext', function () {
   nextVideo()
+})
+
+$(window).resize(function () {
+  bigPlayer()
 })
 
 // FUNCTIONS

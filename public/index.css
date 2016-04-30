@@ -47,18 +47,6 @@
   color: #616161;
 }
 
-:-ms-input-placeholder {
-  color: #616161;
-}
-
-#countdown{
-  font-size:5vw;
-}
-
-.btn-large a{
-  font-size: 2vw;
-}
-
 input[type=text] {
   height: 7vh;
   font-size: 3vh;

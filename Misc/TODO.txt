@@ -1,10 +1,3 @@
 REDDIT EXPLORER
 Editeur notes
 netflix launcher (see testNewTab.html)
-
-Bouton synchro :
- Recupere le timer
- envoi un event synchro
-   seekto(timer,true)
-
-Page Historique + Queue + Current

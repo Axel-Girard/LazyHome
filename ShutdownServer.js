@@ -2,7 +2,7 @@
 
 var exec = require('child_process').exec
 
-module.exports = function (app, io, config) {
+module.exports = function (app, io, config, logger) {
   io.sockets.on('connection', (socket) => {
     if (socket.client.request.headers.host.indexOf('192.168.1') > -1) { socket.join('locals') }
 
@@ -17,7 +17,7 @@ module.exports = function (app, io, config) {
 
   function cancel (socket) {
     exec('shutdown -a', (error, stdout, stderr) => {
-      console.log(`stdout: ${stdout}`)
+      logger.log('info', `[SHUTDOWN] stdout: ${stdout}`)
       if (error === null) {
         socket.broadcast.emit('Shutdown:canceled')
         socket.emit('Shutdown:canceled')
@@ -30,7 +30,7 @@ module.exports = function (app, io, config) {
     var cmd = 'shutdown -s -f -t ' + timer
     if (password === config['Shutdown_mdp']) {
       exec(cmd, (error, stdout, stderr) => {
-        console.log(`stdout: ${stdout}`)
+        logger.log('info', `[SHUTDOWN] stdout: ${stdout}`)
         if (error === null) {
           socket.broadcast.emit('Shutdown:inprogress', timer)
           socket.emit('Shutdown:inprogress', timer)

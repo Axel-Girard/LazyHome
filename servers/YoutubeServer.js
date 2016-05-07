@@ -2,7 +2,7 @@
 
 module.exports = function (app, io, path) {
   app.get('/Youtube', (req, res) => {
-    res.sendfile(path.join(__dirname, '/public/src/Youtube/YoutubeWatch/YoutubeWatch.html'))
+    res.sendfile(path.join(__dirname, '../public/src/Youtube/YoutubeWatch/YoutubeWatch.html'))
   })
 
   io.sockets.on('connection', (socket) => {

@@ -4,21 +4,16 @@ var React = require('react')
 var io = require('socket.io-client')
 
 var CloseButton = require('../Components/CloseButton.jsx')
-var ControlButton = require('../Components/ControlButton.jsx')
 var SearchBar = require('../Components/SearchBar.jsx')
 
-var MESSAGES = {searchBarPlaceholder: 'Password ...',
-                title: 'Power',
-                logo: 'fa fa-power-off fa-5x'}
-var COLOR = 'blue'
+var MESSAGES = {searchBarPlaceholder: 'Channel ...',
+                title: 'Twitch',
+                logo: 'fa fa-twitch fa-4x'}
+var COLOR = 'purple'
 var socket = io()
 
-function startShutdown (value) {
-  socket.emit('Shutdown:shutdown', value)
-}
-
-function cancelShutdown () {
-  socket.emit('Shutdown:cancel')
+function emitChannel (value) {
+  socket.emit('Twitch:new', value)
 }
 
 module.exports = React.createClass({
@@ -39,12 +34,19 @@ module.exports = React.createClass({
             </div>
             <div className='row'>
               <div className='col s12'>
-                <SearchBar color={COLOR} placeholder={MESSAGES.searchBarPlaceholder} onSubmit={startShutdown}/>
+                <SearchBar color={COLOR} placeholder={MESSAGES.searchBarPlaceholder} onSubmit={emitChannel}/>
               </div>
             </div>
             <div className='row'>
-              <div className='col s12 center-align'>
-                <ControlButton color={COLOR} onClick={cancelShutdown}>Cancel</ControlButton>
+              <div className='col s6 center-align'>
+                <a className='waves-effect waves-light btn-large purple lighten-3 btn-flat' href='/Twitch/Player' target='_blank'>
+                  <b>Stream</b>
+                </a>
+              </div>
+              <div className='col s6 center-align'>
+                <a className='waves-effect waves-light btn-large purple lighten-3 btn-flat' href='/Twitch/Chat' target='_blank'>
+                  <b>Chat</b>
+                </a>
               </div>
             </div>
           </div>

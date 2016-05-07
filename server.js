@@ -12,8 +12,9 @@ var config = require('./Config.js')
 logger.add(logger.transports.File, { filename: './logs/winston.log' })
 logger.remove(logger.transports.Console)
 
-require('./YoutubeServer.js')(app, io, path)
-require('./ShutdownServer.js')(app, io, config, logger)
+require('./servers/YoutubeServer.js')(app, io, path)
+require('./servers/ShutdownServer.js')(app, io, config, logger)
+require('./servers/TwitchServer.js')(app, io, path)
 
 app.use(express.static(path.join(__dirname, '/public')))
 
@@ -24,3 +25,5 @@ app.get('/', (req, res) => {
 logger.log('info', 'Start on port 8180')
 
 server.listen(8180)
+
+console.log('Running : 192.168.1.10:8180')

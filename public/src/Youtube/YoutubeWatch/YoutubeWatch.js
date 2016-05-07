@@ -1,4 +1,4 @@
-/* globals io:true, YT:true, $:true */
+/* globals io YT $ */
 /* eslint-disable no-unused-vars */
 
 'use strict'

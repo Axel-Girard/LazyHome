@@ -11,8 +11,8 @@
   <body class="lighten-5 purple">
     <main></main>
     <div class="row">
-      <form action='/' method='post'>
-        <input id='search' type='text' class="lighten-3 purple black-text" value="" placeholder="Channel ..."/>
+      <form action='/' method='post' onSubmit="return submitFormChat()">
+        <input id='search' type='text' class="lighten-3 purple black-text" placeholder="Channel ..."/>
         <input type='submit' hidden/>
       </form>
     </div>

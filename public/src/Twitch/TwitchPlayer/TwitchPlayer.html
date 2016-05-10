@@ -6,9 +6,16 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="../src/Twitch/Twitch.css">
+    <link rel="stylesheet" href="../index.css">
   </head>
-  <body>
+  <body class="lighten-5 purple">
     <main></main>
+    <div class="row">
+      <form action='/' method='post' onSubmit="return submitFormPlayer()">
+        <input id='search' type='text' class="lighten-3 purple black-text" placeholder="Channel ..."/>
+        <input type='submit' hidden/>
+      </form>
+    </div>
     <i class="fa fa-twitch fa-5x" aria-hidden="true"></i>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>

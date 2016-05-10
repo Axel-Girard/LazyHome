@@ -1,4 +1,5 @@
 /* globals io $*/
+/* eslint-disable no-unused-vars*/
 
 'use strict'
 
@@ -29,4 +30,10 @@ $(window).resize(function () {
 function bigPlayer () {
   $('#chat_embed').height($(window).innerHeight())
   $('#chat_embed').width($(window).innerWidth())
+}
+
+function submitFormChat () {
+  showChat(prepareChat($('#search').val()))
+  $('#search').val('')
+  return false
 }

@@ -11,7 +11,6 @@ module.exports = function (app, io, path) {
 
   io.sockets.on('connection', (socket) => {
     socket.on('Twitch:new', (channel) => {
-      console.log(channel)
       socket.broadcast.emit('Twitch:new', channel)
     })
   })

@@ -22,8 +22,8 @@ app.get('/', (req, res) => {
   res.sendfile(path.join(__dirname, '/public/index.html'))
 })
 
-logger.log('info', 'Start on port 8180')
-
 server.listen(8180)
 
-console.log('Running : 192.168.1.10:8180')
+logger.log('info', 'Start on port 8180')
+
+console.log('Start on port 8180')

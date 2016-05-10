@@ -1,11 +1,11 @@
 body {
   overflow: hidden;
-  font-size: 10vw;
   color: mediumpurple;
   text-align: center;
 }
 
 i {
+  font-size: 5vh;
   margin-top: 2vh;
   vertical-align: middle;
 }

@@ -23,3 +23,5 @@ Build :
 ```bash
 npm run build
 ```
+
+Made with :heart: by Erwann.

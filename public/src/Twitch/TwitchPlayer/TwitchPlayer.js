@@ -5,19 +5,26 @@
 
 var socket = io()
 
-socket.on('Twitch:new', function (channel) {
-  console.log(channel)
-  showChat(prepareChat(channel))
+socket.emit('Twitch:connection')
+
+socket.on('Twitch:connected', function (channel) {
+  if (channel !== null) {
+    showPlayer(preparePlayer(channel))
+  }
 })
 
-function prepareChat (channel) {
+socket.on('Twitch:new', function (channel) {
+  showPlayer(preparePlayer(channel))
+})
+
+function preparePlayer (channel) {
   var element = '<iframe frameborder="0" scrolling="no" id="chat_embed" allowfullscreen="true"'
   element += 'src="http://player.twitch.tv/?channel=' + channel + '" '
   element += '></iframe>'
   return element
 }
 
-function showChat (element) {
+function showPlayer (element) {
   $('main').empty()
   $('main').append(element)
   bigPlayer()
@@ -33,7 +40,7 @@ function bigPlayer () {
 }
 
 function submitFormPlayer () {
-  showChat(prepareChat($('#search').val()))
+  showPlayer(preparePlayer($('#search').val()))
   $('#search').val('')
   return false
 }

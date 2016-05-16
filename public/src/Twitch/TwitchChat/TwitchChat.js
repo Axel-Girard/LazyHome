@@ -5,9 +5,18 @@
 
 var socket = io()
 
+socket.emit('Twitch:connection')
+
+socket.on('Twitch:connected', function (channel) {
+  if (channel !== null && channel !== '') {
+    showChat(prepareChat(channel))
+  }
+})
+
 socket.on('Twitch:new', function (channel) {
-  console.log(channel)
-  showChat(prepareChat(channel))
+  if (channel !== null && channel !== '') {
+    showChat(prepareChat(channel))
+  }
 })
 
 function prepareChat (channel) {

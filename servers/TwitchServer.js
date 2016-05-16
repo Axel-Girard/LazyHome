@@ -1,12 +1,8 @@
 'use strict'
 
 module.exports = function (app, io, path) {
-  app.get('/Twitch/Chat', (req, res) => {
-    res.sendfile(path.join(__dirname, '../public/src/Twitch/TwitchChat/TwitchChat.html'))
-  })
-
-  app.get('/Twitch/Player', (req, res) => {
-    res.sendfile(path.join(__dirname, '../public/src/Twitch/TwitchPlayer/TwitchPlayer.html'))
+  app.get('/Twitch', (req, res) => {
+    res.sendfile(path.join(__dirname, '../public/src/Twitch/Twitch.html'))
   })
 
   var currentChannel

@@ -902,75 +902,6 @@ function toArray(r,o){var t=[];o=o||0;for(var a=o||0;a<r.length;a++)t[a-o]=r[a];
 'use strict';
 
 var React = require('react');
-var ReactDOM = require('react-dom');
-
-var Door = require('./src/Components/Door.jsx');
-var Youtube = require('./src/Youtube/Youtube.jsx');
-var Shutdown = require('./src/Shutdown/Shutdown.jsx');
-var Twitch = require('./src/Twitch/TwitchControls.jsx');
-
-var COL = 's4';
-
-function hidePage() {
-  ReactDOM.render(React.createElement('div', null), document.getElementById('page'));
-}
-
-function showYoutube() {
-  ReactDOM.render(React.createElement(Youtube, { close: hidePage }), document.getElementById('page'));
-}
-
-function showShutdown() {
-  ReactDOM.render(React.createElement(Shutdown, { close: hidePage }), document.getElementById('page'));
-}
-
-function showTwitch() {
-  ReactDOM.render(React.createElement(Twitch, { close: hidePage }), document.getElementById('page'));
-}
-
-var App = React.createClass({
-  displayName: 'App',
-
-  render: function render() {
-    return React.createElement('div', null, React.createElement(Door, { color: 'red', col: COL, onClick: showYoutube }, React.createElement('i', { className: 'fa fa-youtube-play fa-4x' }), React.createElement('br', null), 'Youtube'), React.createElement(Door, { color: 'blue', col: COL, onClick: showShutdown }, React.createElement('i', { className: 'fa fa-power-off fa-4x' }), React.createElement('br', null), 'Power'), React.createElement(Door, { color: 'purple', col: COL, onClick: showTwitch }, React.createElement('i', { className: 'fa fa-twitch fa-4x' }), React.createElement('br', null), 'Twitch'));
-  }
-});
-
-ReactDOM.render(React.createElement(App, null), document.getElementById('bodyWrapper'));
-
-},{"./src/Components/Door.jsx":216,"./src/Shutdown/Shutdown.jsx":219,"./src/Twitch/TwitchControls.jsx":220,"./src/Youtube/Youtube.jsx":221,"react":199,"react-dom":61}],214:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-
-/* props : onClick */
-module.exports = React.createClass({
-  displayName: 'exports',
-
-  render: function render() {
-    return React.createElement('i', { className: 'fa fa-times fa-3x right-align valign', onClick: this.props.onClick });
-  }
-});
-
-},{"react":199}],215:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-
-/* props : color, onClick, children */
-module.exports = React.createClass({
-  displayName: 'exports',
-
-  render: function render() {
-    var classes = 'waves-effect waves-light btn-large lighten-3 btn-flat ' + this.props.color;
-    return React.createElement('a', { className: classes, onClick: this.props.onClick, onTouchEnd: this.props.onTouchEnd, onMouseUp: this.props.onMouseUp,
-      onTouchStart: this.props.onTouchStart, onMouseDown: this.props.onMouseDown }, this.props.children);
-  }
-});
-
-},{"react":199}],216:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
 
 /* props : color, onClick, children, col */
 module.exports = React.createClass({
@@ -983,260 +914,83 @@ module.exports = React.createClass({
   }
 });
 
-},{"react":199}],217:[function(require,module,exports){
+},{"react":199}],214:[function(require,module,exports){
 'use strict';
 
-/*globals $*/
+/* globals $ */
 
 var React = require('react');
-
-/* props : color, placeholder, onSubmit */
-module.exports = React.createClass({
-  displayName: 'exports',
-
-  getInitialState: function getInitialState() {
-    return { value: '' };
-  },
-  handleSubmit: function handleSubmit(event) {
-    event.preventDefault();
-    this.props.onSubmit(this.state.value);
-    this.setState({ value: '' });
-    $(event.target).find('input')[0].blur();
-  },
-  handleChange: function handleChange(event) {
-    this.setState({ value: event.target.value });
-  },
-  render: function render() {
-    var classes = 'lighten-3 black-text ' + this.props.color;
-    return React.createElement('form', { action: '/', method: 'post', onSubmit: this.handleSubmit }, React.createElement('div', { 'class': 'input-field' }, React.createElement('input', { id: 'search', type: 'text', className: classes, value: this.state.value, onChange: this.handleChange, placeholder: this.props.placeholder })), React.createElement('input', { type: 'submit', hidden: true }));
-  }
-});
-
-},{"react":199}],218:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-
-/* props : color, children */
-module.exports = React.createClass({
-  displayName: 'exports',
-
-  render: function render() {
-    var classes = 'chip white-text ' + this.props.color;
-    var text = this.props.children ? React.createElement('div', { className: classes }, this.props.children, React.createElement('i', { className: 'material-icons' }, 'close')) : React.createElement('div', null);
-    return text;
-  }
-});
-
-},{"react":199}],219:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var io = require('socket.io-client');
-
-var CloseButton = require('../Components/CloseButton.jsx');
-var ControlButton = require('../Components/ControlButton.jsx');
-var SearchBar = require('../Components/SearchBar.jsx');
-
-var MESSAGES = { searchBarPlaceholder: 'Password ...',
-  title: 'Power',
-  logo: 'fa fa-power-off fa-5x' };
-var COLOR = 'blue';
-var socket = io();
-
-function startShutdown(value) {
-  socket.emit('Shutdown:shutdown', value);
-}
-
-function cancelShutdown() {
-  socket.emit('Shutdown:cancel');
-}
-
-module.exports = React.createClass({
-  displayName: 'exports',
-
-  render: function render() {
-    var cardClasses = 'card lighten-5 page ' + COLOR;
-    var logoClasses = MESSAGES.logo + ' ' + COLOR + '-text';
-    return React.createElement('div', { className: 'col s12' }, React.createElement('div', { className: cardClasses }, React.createElement('div', { className: 'container' }, React.createElement('div', { className: 'row' }, React.createElement('div', { className: 'col s11 black-text center-align', id: 'Title' }, React.createElement('i', { className: logoClasses }), React.createElement('h1', null, MESSAGES.title)), React.createElement('div', { className: 'col s1 black-text right-align' }, React.createElement(CloseButton, { onClick: this.props.close }))), React.createElement('div', { className: 'row' }, React.createElement('div', { className: 'col s12' }, React.createElement(SearchBar, { color: COLOR, placeholder: MESSAGES.searchBarPlaceholder, onSubmit: startShutdown }))), React.createElement('div', { className: 'row' }, React.createElement('div', { className: 'col s12 center-align' }, React.createElement(ControlButton, { color: COLOR, onClick: cancelShutdown }, 'Cancel'))))));
-  }
-});
-
-},{"../Components/CloseButton.jsx":214,"../Components/ControlButton.jsx":215,"../Components/SearchBar.jsx":217,"react":199,"socket.io-client":200}],220:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var io = require('socket.io-client');
-
-var CloseButton = require('../Components/CloseButton.jsx');
-var SearchBar = require('../Components/SearchBar.jsx');
-
-var MESSAGES = { searchBarPlaceholder: 'Channel ...',
-  title: 'Twitch',
-  logo: 'fa fa-twitch fa-4x' };
-var COLOR = 'purple';
-var socket = io();
-
-function emitChannel(value) {
-  socket.emit('Twitch:new', value);
-}
-
-module.exports = React.createClass({
-  displayName: 'exports',
-
-  render: function render() {
-    var cardClasses = 'card lighten-5 page ' + COLOR;
-    var logoClasses = MESSAGES.logo + ' ' + COLOR + '-text';
-    return React.createElement('div', { className: 'col s12' }, React.createElement('div', { className: cardClasses }, React.createElement('div', { className: 'container' }, React.createElement('div', { className: 'row' }, React.createElement('div', { className: 'col s11 black-text center-align', id: 'Title' }, React.createElement('i', { className: logoClasses }), React.createElement('h1', null, MESSAGES.title)), React.createElement('div', { className: 'col s1 black-text right-align' }, React.createElement(CloseButton, { onClick: this.props.close }))), React.createElement('div', { className: 'row' }, React.createElement('div', { className: 'col s12' }, React.createElement(SearchBar, { color: COLOR, placeholder: MESSAGES.searchBarPlaceholder, onSubmit: emitChannel }))), React.createElement('div', { className: 'row' }, React.createElement('div', { className: 'col s12 center-align' }, React.createElement('a', { className: 'waves-effect waves-light btn-large purple lighten-3 btn-flat', href: '/Twitch', target: '_blank' }, React.createElement('b', null, 'View')))))));
-  }
-});
-
-},{"../Components/CloseButton.jsx":214,"../Components/SearchBar.jsx":217,"react":199,"socket.io-client":200}],221:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var io = require('socket.io-client');
 var ReactDOM = require('react-dom');
+var io = require('socket.io-client');
 
-var CloseButton = require('../Components/CloseButton.jsx');
-var ControlButton = require('../Components/ControlButton.jsx');
-var SearchBar = require('../Components/SearchBar.jsx');
-var UniversalError = require('../Components/UniversalError.jsx');
+var Door = require('../Components/Door.jsx');
 
-var MESSAGES = {
-  errorUrlFormat: 'Wrong URL Format',
-  searchBarPlaceholder: 'Search ...',
-  title: 'Youtube',
-  logo: 'fa fa-youtube-play fa-5x'
-};
-var COLOR = 'red';
-var timeout;
-var timeoutClick;
-var CHIPS_OUT = 3000;
-var OriginalIncrement = 1;
 var socket = io();
 
-function onClickPlay() {
-  socket.emit('Youtube:resume');
+var COL = 's6';
+
+$(window).resize(function () {
+  bigPlayer();
+});
+
+function bigPlayer() {
+  $('#chat_embed').height($(window).innerHeight());
+  $('#chat_embed').width($(window).innerWidth());
 }
 
-function onClickPause() {
-  socket.emit('Youtube:pause');
-}
-
-function onClickPrevious() {
-  socket.emit('Youtube:previous');
-}
-
-function onClickNext() {
-  socket.emit('Youtube:next');
-}
-
-function onClickBigNext() {
-  socket.emit('Youtube:bigNext');
-}
-
-function onClickClear() {
-  socket.emit('Youtube:clear');
-}
-
-function setVolume(volume) {
-  socket.emit('Youtube:volume', volume);
-}
-
-function onNewUrl(url) {
-  var id = videoURL_parser(url);
-  if (!id) {
-    id = playlistURL_parser(url);
-    if (!id) {
-      showError(MESSAGES.errorUrlFormat, CHIPS_OUT);
-    } else {
-      socket.emit('Youtube:add', url);
-    }
-  } else {
-    socket.emit('Youtube:add', url);
-  }
-}
-
-function videoURL_parser(url) {
-  var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-  var match = url.match(regExp);
-  return match && match[7].length === 11 ? match[7] : false;
-}
-
-function playlistURL_parser(url) {
-  var regExp = /^.*(youtu.be\/|list=)([^#\&\?]*).*/;
-  var match = url.match(regExp);
-  return match && match[2] ? match[2] : false;
-}
-
-function showError(message, duration) {
-  clearTimeout(timeout);
-  ReactDOM.render(React.createElement(UniversalError, null, message), document.getElementById('YoutubeErrorRow'));
-  timeout = setTimeout(function () {
-    return ReactDOM.render(React.createElement('div', null), document.getElementById('YoutubeErrorRow'));
-  }, duration);
-}
-
-module.exports = React.createClass({
-  displayName: 'exports',
+var TwitchView = React.createClass({
+  displayName: 'TwitchView',
 
   getInitialState: function getInitialState() {
-    return { volume: 50,
-      duration: 0,
-      increment: OriginalIncrement,
-      down: false
+    return { chat: false,
+      player: false,
+      iframe: ''
     };
   },
-  autoInc: function autoInc(inc) {
-    var _this = this;
+  componentDidMount: function componentDidMount() {
+    socket.on('Twitch:connected', this.processElement);
+    socket.on('Twitch:new', this.processElement);
+  },
 
-    if (this.state.down) {
-      this.incVolume(inc);
-      this.setState({ duration: this.state.duration + 1 });
-      if (this.state.increment < OriginalIncrement * 10 && this.state.volume % 5 === 0) {
-        this.setState({ increment: 5 * Math.ceil(this.state.duration / 5) });
+  processElement: function processElement(channel) {
+    if (channel !== null && channel !== '') {
+      if (this.state.chat) {
+        this.getChat(channel);
+      } else if (this.state.player) {
+        this.getPlayer(channel);
       }
-      timeoutClick = setTimeout(function () {
-        _this.autoInc(inc);
-      }, 500);
     }
   },
-  incVolume: function incVolume(inc) {
-    var newVolume = inc ? Math.min(100, this.state.volume + this.state.increment) : Math.max(0, this.state.volume - this.state.increment);
-    this.setState({ volume: newVolume });
-    setVolume(newVolume);
+  getPlayer: function getPlayer(channel) {
+    var element = '<iframe frameborder="0" scrolling="no" id="chat_embed" allowfullscreen="true"';
+    element += 'src="http://player.twitch.tv/?channel=' + channel + '" ';
+    element += 'style="height: ' + $(window).innerHeight() + 'px; width: ' + $(window).innerWidth() + 'px;"></iframe>';
+    this.setState({ iframe: element });
   },
-  onMouseDownInc: function onMouseDownInc() {
-    var _this2 = this;
 
-    this.setState({ down: true });
-    setTimeout(function () {
-      _this2.autoInc(true);
-    }, 1);
+  getChat: function getChat(channel) {
+    var element = '<iframe frameborder="0" scrolling="no" id="chat_embed"';
+    element += 'src="http://www.twitch.tv/' + channel + '/chat" ';
+    element += 'style="height: ' + $(window).innerHeight() + 'px; width: ' + $(window).innerWidth() + 'px;"></iframe>';
+    this.setState({ iframe: element });
   },
-  onMouseDownDec: function onMouseDownDec() {
-    var _this3 = this;
-
-    this.setState({ down: true });
-    setTimeout(function () {
-      _this3.autoInc(false);
-    }, 1);
+  clickChat: function clickChat() {
+    this.setState({ chat: true, player: false });
+    socket.emit('Twitch:connection');
   },
-  onMouseUp: function onMouseUp() {
-    clearTimeout(timeoutClick);
-    this.setState({ duration: 0,
-      increment: OriginalIncrement,
-      down: false });
+  clickPlayer: function clickPlayer() {
+    this.setState({ chat: false, player: true });
+    socket.emit('Twitch:connection');
+  },
+  getIframe: function getIframe() {
+    return { __html: this.state.iframe };
   },
   render: function render() {
-    var cardClasses = 'card lighten-5 page ' + COLOR;
-    var logoClasses = MESSAGES.logo + ' ' + COLOR + '-text';
-    return React.createElement('div', { className: 'col s12' }, React.createElement('div', { className: cardClasses, id: 'YoutubeControls' }, React.createElement('div', { className: 'container' }, React.createElement('div', { className: 'row' }, React.createElement('div', { className: 'col s11 black-text center-align', id: 'Title' }, React.createElement('i', { className: logoClasses }), React.createElement('h1', null, MESSAGES.title)), React.createElement('div', { className: 'col s1 black-text right-align' }, React.createElement(CloseButton, { onClick: this.props.close }))), React.createElement('div', { className: 'row' }, React.createElement('div', { className: 'col s12', id: 'YoutubeErrorRow' })), React.createElement('div', { className: 'row' }, React.createElement('div', { className: 'col s12' }, React.createElement(SearchBar, { color: COLOR, placeholder: MESSAGES.searchBarPlaceholder, onSubmit: onNewUrl }))), React.createElement('div', { className: 'row' }, React.createElement('div', { className: 'col s3 center-align' }, React.createElement(ControlButton, { color: COLOR, onClick: onClickPrevious }, React.createElement('i', { className: 'fa fa-step-backward fa-5x' }))), React.createElement('div', { className: 'col s3 center-align' }, React.createElement(ControlButton, { color: COLOR, onClick: onClickPlay }, React.createElement('i', { className: 'fa fa-play fa-5x' }))), React.createElement('div', { className: 'col s3 center-align' }, React.createElement(ControlButton, { color: COLOR, onClick: onClickNext }, React.createElement('i', { className: 'fa fa-step-forward fa-5x' }))), React.createElement('div', { className: 'col s3 center-align' }, React.createElement(ControlButton, { color: COLOR, onTouchEnd: this.onMouseUp, onMouseUp: this.onMouseUp,
-      onTouchStart: this.onMouseDownInc, onMouseDown: this.onMouseDownInc }, React.createElement('i', { className: 'fa fa-plus fa-5x' })))), React.createElement('div', { className: 'row' }, React.createElement('div', { className: 'col s3 center-align' }, React.createElement(ControlButton, { color: COLOR, onClick: onClickClear }, React.createElement('i', { className: 'fa fa-trash fa-5x' }))), React.createElement('div', { className: 'col s3 center-align' }, React.createElement(ControlButton, { color: COLOR, onClick: onClickPause }, React.createElement('i', { className: 'fa fa-pause fa-5x' }))), React.createElement('div', { className: 'col s3 center-align' }, React.createElement(ControlButton, { color: COLOR, onClick: onClickBigNext }, React.createElement('i', { className: 'fa fa-arrow-right fa-5x' }))), React.createElement('div', { className: 'col s3 center-align' }, React.createElement('span', { id: 'VolumeText' }, this.state.volume))), React.createElement('div', { className: 'row' }, React.createElement('div', { className: 'col s3 offset-s3 center-align' }, React.createElement('a', { className: 'waves-effect waves-light btn-large red lighten-3 btn-flat', href: '/Youtube', target: '_blank' }, React.createElement('b', null, 'Watch'))), React.createElement('div', { className: 'col s3 offset-s3 center-align' }, React.createElement(ControlButton, { color: COLOR, onTouchEnd: this.onMouseUp, onMouseUp: this.onMouseUp,
-      onTouchStart: this.onMouseDownDec, onMouseDown: this.onMouseDownDec }, React.createElement('i', { className: 'fa fa-minus fa-5x' })))))));
+    return React.createElement('div', null, React.createElement('div', { dangerouslySetInnerHTML: this.getIframe() }), React.createElement('div', { className: 'row' }, React.createElement(Door, { color: 'purple', col: COL, onClick: this.clickPlayer }, 'Player'), React.createElement(Door, { color: 'purple', col: COL, onClick: this.clickChat }, 'Chat')));
   }
 });
 
-},{"../Components/CloseButton.jsx":214,"../Components/ControlButton.jsx":215,"../Components/SearchBar.jsx":217,"../Components/UniversalError.jsx":218,"react":199,"react-dom":61,"socket.io-client":200}]},{},[213])
-//# sourceMappingURL=app.js.map
+ReactDOM.render(React.createElement(TwitchView, null), document.getElementById('bodyWrapper'));
+
+},{"../Components/Door.jsx":213,"react":199,"react-dom":61,"socket.io-client":200}]},{},[214])
+//# sourceMappingURL=TwitchView.js.map

@@ -38,14 +38,9 @@ module.exports = React.createClass({
               </div>
             </div>
             <div className='row'>
-              <div className='col s6 center-align'>
-                <a className='waves-effect waves-light btn-large purple lighten-3 btn-flat' href='/Twitch/Player' target='_blank'>
-                  <b>Stream</b>
-                </a>
-              </div>
-              <div className='col s6 center-align'>
-                <a className='waves-effect waves-light btn-large purple lighten-3 btn-flat' href='/Twitch/Chat' target='_blank'>
-                  <b>Chat</b>
+              <div className='col s12 center-align'>
+                <a className='waves-effect waves-light btn-large purple lighten-3 btn-flat' href='/Twitch' target='_blank'>
+                  <b>View</b>
                 </a>
               </div>
             </div>

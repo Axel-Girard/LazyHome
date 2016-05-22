@@ -3,11 +3,21 @@
 .door{
   font-size:5vw;
   padding-top: 1vh;
+  opacity:0;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+  -webkit-animation-fill-mode: forwards;
 }
 
 .page {
   height: 100%;
   padding-top: 1vh;
+  opacity: 0;
+  -webkit-transform: translateY(-400px);
+  transform: translateY(-400px);
+  -webkit-animation: fadeInDown 0.2s;
+  animation: fadeInDown 0.2s;
+  -webkit-animation-fill-mode: forwards;
 }
 
 ::-webkit-input-placeholder {

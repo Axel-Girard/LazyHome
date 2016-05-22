@@ -1017,7 +1017,9 @@ module.exports = React.createClass({
   displayName: 'exports',
 
   componentDidMount: function componentDidMount() {
-    $('input').focus();
+    setTimeout(function () {
+      $('input').focus();
+    }, 0);
   },
   getInitialState: function getInitialState() {
     return { value: '' };

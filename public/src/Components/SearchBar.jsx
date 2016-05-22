@@ -4,7 +4,7 @@ var React = require('react')
 /* props : color, placeholder, onSubmit */
 module.exports = React.createClass({
   componentDidMount: function () {
-    $('input').focus()
+    setTimeout(() => { $('input').focus() }, 0)
   },
   getInitialState: function () {
     return {value: ''}

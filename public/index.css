@@ -1,12 +1,17 @@
 /* Youtube */
 
-.door{
+.door {
   font-size:5vw;
   padding-top: 1vh;
   opacity:0;
   -webkit-animation: fadeIn 1s;
   animation: fadeIn 1s;
   -webkit-animation-fill-mode: forwards;
+  -webkit-transition: background-color .2s linear;
+  -moz-transition: background-color .2s linear;
+  -o-transition: background-color .2s linear;
+  -ms-transition: background-color .2s linear;
+  transition: background-color .2s linear;
 }
 
 .page {

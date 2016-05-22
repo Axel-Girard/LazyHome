@@ -946,8 +946,15 @@ var React = require('react');
 module.exports = React.createClass({
   displayName: 'exports',
 
+  onKeyDown: function onKeyDown(e) {
+    var code = e.which;
+    // 13 = Return, 32 = Space
+    if (code === 13 || code === 32) {
+      this.props.onClick();
+    }
+  },
   render: function render() {
-    return React.createElement('i', { className: 'fa fa-times fa-3x right-align valign', onClick: this.props.onClick });
+    return React.createElement('i', { className: 'fa fa-times fa-3x right-align valign', onClick: this.props.onClick, tabIndex: '0', onKeyDown: this.onKeyDown });
   }
 });
 
@@ -976,10 +983,25 @@ var React = require('react');
 module.exports = React.createClass({
   displayName: 'exports',
 
+  getInitialState: function getInitialState() {
+    return { classes: 'card accent-4 center white-text door ' + this.props.color };
+  },
+  onFocus: function onFocus() {
+    this.setState({ classes: 'card lighten-4 center ' + this.props.color + '-text door ' + this.props.color });
+  },
+  onBlur: function onBlur() {
+    this.setState({ classes: 'card accent-4 center white-text door ' + this.props.color });
+  },
+  onKeyDown: function onKeyDown(e) {
+    var code = e.which;
+    // 13 = Return, 32 = Space
+    if (code === 13 || code === 32) {
+      this.props.onClick();
+    }
+  },
   render: function render() {
-    var classes = 'card accent-4 center white-text door ' + this.props.color;
     var col = 'col ' + this.props.col;
-    return React.createElement('div', { onClick: this.props.onClick, className: col }, React.createElement('div', { className: classes }, this.props.children));
+    return React.createElement('div', { onClick: this.props.onClick, tabIndex: '0', onFocus: this.onFocus, onBlur: this.onBlur, className: col, onKeyDown: this.onKeyDown }, React.createElement('div', { className: this.state.classes }, this.props.children));
   }
 });
 
@@ -994,6 +1016,9 @@ var React = require('react');
 module.exports = React.createClass({
   displayName: 'exports',
 
+  componentDidMount: function componentDidMount() {
+    $('input').focus();
+  },
   getInitialState: function getInitialState() {
     return { value: '' };
   },

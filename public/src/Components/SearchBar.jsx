@@ -3,6 +3,9 @@ var React = require('react')
 
 /* props : color, placeholder, onSubmit */
 module.exports = React.createClass({
+  componentDidMount: function () {
+    $('input').focus()
+  },
   getInitialState: function () {
     return {value: ''}
   },

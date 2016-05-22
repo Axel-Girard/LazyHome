@@ -13,7 +13,7 @@ Allow to watch twitch stream / chat
 Set up : 
 ```bash
 npm install
-npm install -g watchify
+npm install -g simplifyify
 ```
 Start : 
 ```bash
